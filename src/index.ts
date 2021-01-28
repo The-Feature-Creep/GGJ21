@@ -5,7 +5,7 @@ class MyGame extends Phaser.Scene
 {
     constructor ()
     {
-        super();
+        super('demo');
     }
 
     preload ()
