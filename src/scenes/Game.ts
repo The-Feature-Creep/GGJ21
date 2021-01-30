@@ -6,7 +6,7 @@ export class GameScene extends Phaser.Scene {
 	private velocity: Phaser.Math.Vector2;
 
 	constructor() {
-		super("demo");
+		super("Game");
 	}
 
 	preload() {
