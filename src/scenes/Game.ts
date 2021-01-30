@@ -1,11 +1,21 @@
-import CharacterImg from '../assets/character.png';
-import SpotlightImg from '../assets/spotlight.png';
-import { Spotlight, SPOTLIGHT_IMG_KEY } from '../objects/spotlight';
+import { Shovel } from './../objects/shovel';
+import { Player } from '../objects/player';
+import CharacterImg from '../assets/prisoner.png';
+import PlatformImg from '../assets/platform.png';
+import BushImg from '../assets/character.png';
+import RockImg from '../assets/character.png';
+import TreeImg from '../assets/character.png';
+import { SPOTLIGHT_IMG_KEY } from '../objects/spotlight';
+
 export class GameScene extends Phaser.Scene {
-  private player;
-  private cursors;
-  private velocity: Phaser.Math.Vector2;
-  private spotlight: Spotlight;
+  private player: Player;
+  private playerObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+  private shovel: Shovel;
+  private ground: Phaser.Types.Physics.Arcade.SpriteWithStaticBody;
+
+  private obstacles: Phaser.GameObjects.Group;
+
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
   constructor() {
     super('Game');
@@ -13,49 +23,69 @@ export class GameScene extends Phaser.Scene {
 
   preload() {
     this.load.image('char', CharacterImg);
-    this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
+    this.load.image('platform', PlatformImg);
+    this.load.image('bush', BushImg);
+    this.load.image('rock', RockImg);
+    this.load.image('tree', TreeImg);
+    this.load.image(SPOTLIGHT_IMG_KEY, SPOTLIGHT_IMG_KEY);
   }
 
   create() {
-    this.player = this.add.image(400, 450, 'char');
-    this.player.scale = 0.2;
+    const shovel = this.physics.add
+      .sprite(100, 450, 'bush')
+      .setScale(0.1)
+      .setBounce(0.2)
+      .setCollideWorldBounds(true);
+    const playerSprite = this.physics.add
+      .sprite(100, 450, 'char')
+      .setBounce(0.2)
+      .setCollideWorldBounds(true);
+    this.player = new Player(playerSprite, false, shovel);
+    this.playerObject = this.player.GetSprite;
+
+    this.ground = this.physics.add
+      .staticSprite(400, 600, 'platform')
+      .refreshBody();
+    this.ground.scaleY = 0.1;
+
+    this.obstacles = this.add.group();
+    let bush: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
+      300,
+      450,
+      'bush'
+    );
+    let rock: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
+      400,
+      450,
+      'rock'
+    );
+    let tree: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
+      600,
+      450,
+      'tree'
+    );
+
+    this.physics.add.collider(this.playerObject, this.ground);
+    this.physics.add.collider(bush, this.ground);
+    this.physics.add.collider(rock, this.ground);
+    this.physics.add.collider(tree, this.ground);
+    this.physics.add.collider(this.playerObject, bush);
+    this.physics.add.collider(this.playerObject, rock);
+    this.physics.add.collider(this.playerObject, tree);
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.velocity = new Phaser.Math.Vector2();
-    this.spotlight = new Spotlight(this, 0, 0);
   }
 
   update() {
-    // move left and right
     if (this.cursors.left.isDown) {
-      this.velocity.x -= 2;
+      this.playerObject.setVelocityX(-180);
     } else if (this.cursors.right.isDown) {
-      this.velocity.x += 2;
+      this.playerObject.setVelocityX(180);
+    } else {
+      this.playerObject.setVelocityX(0);
     }
-
-    // jump if on ground
-    if (this.cursors.up.isDown && this.player.y >= 450) {
-      this.velocity.y = -30;
+    if (this.cursors.up.isDown && this.playerObject.body.touching.down) {
+      this.playerObject.setVelocityY(-360);
     }
-
-    this.player.x += this.velocity.x;
-    this.player.y += this.velocity.y;
-
-    // gravity
-    if (this.player.y < 450) this.velocity.y += 2;
-    else this.velocity.y = 0;
-
-    // keep character on screen
-    if (this.player.x < 80) {
-      this.player.x = 80;
-      this.velocity.x = 0;
-    } else if (this.player.x > 800 - 80) {
-      this.player.x = 800 - 80;
-      this.velocity.x = 0;
-    }
-
-    // slow to a stop if no input
-    this.velocity.x *= 0.9;
-    this.spotlight.update();
   }
 }
