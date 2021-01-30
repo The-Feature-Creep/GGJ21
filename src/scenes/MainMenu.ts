@@ -1,8 +1,10 @@
-import PlayInactive from "../assets/main-menu/play-inactive.svg";
-import PlayActive from "../assets/main-menu/play-active.svg";
+import PlayDefault from "../assets/main-menu/play-default.svg";
+import PlayHover from "../assets/main-menu/play-hover.svg";
+import PlayClick from "../assets/main-menu/play-click.svg";
 
-import CreditsInactive from "../assets/main-menu/credits-inactive.svg";
-import CreditsActive from "../assets/main-menu/credits-active.svg";
+import CreditsDefault from "../assets/main-menu/credits-default.svg";
+import CreditsHover from "../assets/main-menu/credits-hover.svg";
+import CreditsClick from "../assets/main-menu/credits-click.svg";
 
 export class MainMenuScene extends Phaser.Scene {
 	play: Phaser.GameObjects.Sprite;
@@ -12,45 +14,51 @@ export class MainMenuScene extends Phaser.Scene {
 	}
 
 	preload() {
-		this.load.image("play-button-inactive", PlayInactive);
-		this.load.image("play-button-active", PlayActive);
+		this.load.image("play-button-default", PlayDefault);
+		this.load.image("play-button-hover", PlayHover);
+		this.load.image("play-button-click", PlayClick);
 
-		this.load.image("credits-button-inactive", CreditsInactive);
-		this.load.image("credits-button-active", CreditsActive);
+		this.load.image("credits-button-default", CreditsDefault);
+		this.load.image("credits-button-hover", CreditsHover);
+		this.load.image("credits-button-click", CreditsClick);
 	}
 
 	create() {
 		this.play = this.add
-			.sprite(400, 200, "play-button-inactive")
-			.setScale(0.5)
+			.sprite(150, 475, "play-button-default")
 			.setInteractive()
 			.on("pointerdown", () => {
-				this.play.setTexture("play-button-active");
-				this.scene.start("Game");
-			})
-			.on("pointerout", () => {
-				this.play.setTexture("play-button-inactive");
+				this.play.setTexture("play-button-click");
 			})
 			.on("pointerup", () => {
-				this.play.setTexture("play-button-inactive");
+				this.play.setTexture("play-button-default");
+				this.scene.start("Game");
+			})
+			.on("pointerover", () => {
+				this.play.setTexture("play-button-hover");
+			})
+			.on("pointerout", () => {
+				this.play.setTexture("play-button-default");
 			});
 
 		this.credits = this.add
-			.sprite(400, 400, "credits-button-inactive")
-			.setScale(0.5)
+			.sprite(150, 525, "credits-button-default")
 			.setInteractive()
 			.on("pointerdown", () => {
-				this.credits.setTexture("credits-button-active");
-				this.scene.start("Credits");
-			})
-			.on("pointerout", () => {
-				this.credits.setTexture("credits-button-inactive");
+				this.credits.setTexture("credits-button-click");
 			})
 			.on("pointerup", () => {
-				this.credits.setTexture("credits-button-inactive");
+				this.credits.setTexture("credits-button-default");
+				this.scene.start("Credits");
+			})
+			.on("pointerover", () => {
+				this.credits.setTexture("credits-button-hover");
+			})
+			.on("pointerout", () => {
+				this.credits.setTexture("credits-button-default");
 			});
 
-		this.events.on("destroy", () => {});
+		this.events.on("destroy", this.destroy);
 	}
 
 	update() {}
