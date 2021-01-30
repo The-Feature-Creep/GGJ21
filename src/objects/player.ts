@@ -1,16 +1,19 @@
 export class Player {
   private sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private isHidden: boolean;
-  private equipment: Phaser.GameObjects.Sprite;
+  private hasShovel: boolean;
+  private shovelActive: boolean;
 
   constructor(
-    private playerSprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
-    private isHidding: boolean,
-    private playerEquipment: Phaser.GameObjects.Sprite
+    playerSprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
+    isHiding: boolean,
+    shovel: boolean,
+    usingShovel: boolean
   ) {
     this.sprite = playerSprite;
-    this.isHidden = isHidding;
-    this.equipment = playerEquipment;
+    this.isHidden = isHiding;
+    this.hasShovel = shovel;
+    this.shovelActive = usingShovel;
   }
 
   get GetSprite() {
@@ -19,11 +22,20 @@ export class Player {
   get GetHidding() {
     return this.isHidden;
   }
-  get GetEquipment() {
-    return this.equipment;
+  get GetHasShovel() {
+    return this.hasShovel;
+  }
+  get GetShovelActive() {
+    return this.shovelActive;
   }
 
-  set SetHidding(isHidding: boolean) {
-    this.isHidden = isHidding;
+  set SetHiding(isHiding: boolean) {
+    this.isHidden = isHiding;
+  }
+  set SetHasShovel(hasS: boolean) {
+    this.hasShovel = hasS;
+  }
+  set SetShovelActive(isHiding: boolean) {
+    this.isHidden = isHiding;
   }
 }

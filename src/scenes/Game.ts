@@ -1,19 +1,16 @@
-import { Shovel } from "./../objects/shovel";
+import { Rock } from "./../objects/rock";
 import { Player } from "../objects/player";
 import CharacterImg from "../assets/prisoner.png";
-import PlatformImg from "../assets/platform.png";
-import BushImg from "../assets/character.png";
-import RockImg from "../assets/character.png";
-import TreeImg from "../assets/character.png";
+import PlatformImg from "../assets/ground.png";
+import RockImg from "../assets/rock.png";
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
   private playerObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-  private shovel: Shovel;
+  private rock: Rock;
+  private rockObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+
   private ground: Phaser.Types.Physics.Arcade.SpriteWithStaticBody;
-
-  private obstacles: Phaser.GameObjects.Group;
-
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
   constructor() {
@@ -23,53 +20,28 @@ export class GameScene extends Phaser.Scene {
   preload() {
     this.load.image("char", CharacterImg);
     this.load.image("platform", PlatformImg);
-    this.load.image("bush", BushImg);
     this.load.image("rock", RockImg);
-    this.load.image("tree", TreeImg);
   }
 
   create() {
-    const shovel = this.physics.add
-      .sprite(100, 450, "bush")
-      .setScale(0.1)
-      .setBounce(0.2)
-      .setCollideWorldBounds(true);
+    this.ground = this.physics.add
+      .staticSprite(500, 480, "platform")
+      .refreshBody();
     const playerSprite = this.physics.add
-      .sprite(100, 450, "char")
+      .sprite(100, 600, "char")
       .setBounce(0.2)
       .setCollideWorldBounds(true);
-    this.player = new Player(playerSprite, false, shovel);
+    this.player = new Player(playerSprite, false, false, false);
     this.playerObject = this.player.GetSprite;
 
-    this.ground = this.physics.add
-      .staticSprite(400, 600, "platform")
-      .refreshBody();
-    this.ground.scaleY = 0.1;
-
-    this.obstacles = this.add.group();
-    let bush: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
-      300,
-      450,
-      "bush"
-    );
-    let rock: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
-      400,
-      450,
-      "rock"
-    );
-    let tree: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
-      600,
-      450,
-      "tree"
-    );
+    const rockSprite = this.physics.add
+      .sprite(300, 600, "rock")
+      .setCollideWorldBounds(true);
+    this.rock = new Rock(rockSprite, "Rock");
+    this.rockObject = this.rock.GetSprite;
 
     this.physics.add.collider(this.playerObject, this.ground);
-    this.physics.add.collider(bush, this.ground);
-    this.physics.add.collider(rock, this.ground);
-    this.physics.add.collider(tree, this.ground);
-    this.physics.add.collider(this.playerObject, bush);
-    this.physics.add.collider(this.playerObject, rock);
-    this.physics.add.collider(this.playerObject, tree);
+    this.physics.add.collider(this.rockObject, this.ground);
 
     this.cursors = this.input.keyboard.createCursorKeys();
   }
@@ -82,8 +54,22 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.playerObject.setVelocityX(0);
     }
-    if (this.cursors.up.isDown && this.playerObject.body.touching.down) {
-      this.playerObject.setVelocityY(-360);
+    if (this.cursors.up.isDown) {
+      this.hideBehind();
+      this.playerObject.disableBody(true, true);
+    } else if (this.cursors.down.isDown) {
+      this.playerObject.enableBody(
+        false,
+        this.playerObject.x,
+        this.playerObject.y,
+        true,
+        true
+      );
+      console.log("down");
     }
+  }
+
+  hideBehind() {
+    this.physics.add.overlap(this.playerObject, this.rockObject);
   }
 }
