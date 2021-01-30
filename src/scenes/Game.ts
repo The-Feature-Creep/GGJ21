@@ -1,16 +1,18 @@
 import { Shovel } from './../objects/shovel';
 import { Player } from '../objects/player';
 import CharacterImg from '../assets/prisoner.png';
+import SpotlightImg from '../assets/spotlight.png';
 import PlatformImg from '../assets/platform.png';
 import BushImg from '../assets/character.png';
 import RockImg from '../assets/character.png';
 import TreeImg from '../assets/character.png';
-import { SPOTLIGHT_IMG_KEY } from '../objects/spotlight';
+import { SPOTLIGHT_IMG_KEY, Spotlight } from '../objects/spotlight';
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
   private playerObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private shovel: Shovel;
+  private spotlight: Spotlight;
   private ground: Phaser.Types.Physics.Arcade.SpriteWithStaticBody;
 
   private obstacles: Phaser.GameObjects.Group;
@@ -27,10 +29,11 @@ export class GameScene extends Phaser.Scene {
     this.load.image('bush', BushImg);
     this.load.image('rock', RockImg);
     this.load.image('tree', TreeImg);
-    this.load.image(SPOTLIGHT_IMG_KEY, SPOTLIGHT_IMG_KEY);
+    this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
   }
 
   create() {
+    this.spotlight = new Spotlight(this, 100, 100);
     const shovel = this.physics.add
       .sprite(100, 450, 'bush')
       .setScale(0.1)
@@ -77,6 +80,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
+    this.spotlight.update();
     if (this.cursors.left.isDown) {
       this.playerObject.setVelocityX(-180);
     } else if (this.cursors.right.isDown) {

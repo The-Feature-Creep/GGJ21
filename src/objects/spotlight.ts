@@ -33,11 +33,9 @@ export class Spotlight {
     this.update();
   }
   private addSpotlight() {
-    this.image = this.scene.add.image(
-      this.startingX,
-      this.startingY,
-      SPOTLIGHT_IMG_KEY
-    );
+    this.image = this.scene.add
+      .image(this.startingX, this.startingY, SPOTLIGHT_IMG_KEY)
+      .setDepth(2);
     this.image.scale = 0.3;
     this.startMovement();
   }
