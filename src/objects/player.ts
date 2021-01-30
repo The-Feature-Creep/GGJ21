@@ -19,7 +19,7 @@ export class Player {
   get GetSprite() {
     return this.sprite;
   }
-  get GetHidding() {
+  get GetHiding() {
     return this.isHidden;
   }
   get GetHasShovel() {
