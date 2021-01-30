@@ -1,10 +1,10 @@
-import PlayDefault from "../assets/main-menu/play-default.svg";
-import PlayHover from "../assets/main-menu/play-hover.svg";
-import PlayClick from "../assets/main-menu/play-click.svg";
+import PlayDefault from "../assets/ui/buttons/play/play-default.svg";
+import PlayHover from "../assets/ui/buttons/play/play-hover.svg";
+import PlayClick from "../assets/ui/buttons/play/play-click.svg";
 
-import CreditsDefault from "../assets/main-menu/credits-default.svg";
-import CreditsHover from "../assets/main-menu/credits-hover.svg";
-import CreditsClick from "../assets/main-menu/credits-click.svg";
+import CreditsDefault from "../assets/ui/buttons/credits/credits-default.svg";
+import CreditsHover from "../assets/ui/buttons/credits/credits-hover.svg";
+import CreditsClick from "../assets/ui/buttons/credits/credits-click.svg";
 
 export class MainMenuScene extends Phaser.Scene {
 	play: Phaser.GameObjects.Sprite;

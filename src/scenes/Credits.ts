@@ -1,6 +1,6 @@
-import BackDefault from "../assets/main-menu/back-default.svg";
-import BackHover from "../assets/main-menu/back-hover.svg";
-import BackClick from "../assets/main-menu/back-click.svg";
+import BackDefault from "../assets/ui/buttons/back/back-default.svg";
+import BackHover from "../assets/ui/buttons/back/back-hover.svg";
+import BackClick from "../assets/ui/buttons/back/back-click.svg";
 
 export class CreditScene extends Phaser.Scene {
 	back: Phaser.GameObjects.Sprite;
