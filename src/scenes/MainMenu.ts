@@ -5,8 +5,8 @@ import CreditsInactive from "../assets/main-menu/credits-inactive.svg";
 import CreditsActive from "../assets/main-menu/credits-active.svg";
 
 export class MainMenuScene extends Phaser.Scene {
-	play;
-	credits;
+	play: Phaser.GameObjects.Sprite;
+	credits: Phaser.GameObjects.Sprite;
 	constructor() {
 		super("MainMenu");
 	}
@@ -20,41 +20,43 @@ export class MainMenuScene extends Phaser.Scene {
 	}
 
 	create() {
-		const play = this.add
+		this.play = this.add
 			.sprite(400, 200, "play-button-inactive")
 			.setScale(0.5)
 			.setInteractive()
 			.on("pointerdown", () => {
-				play.setTexture("play-button-active");
+				this.play.setTexture("play-button-active");
 				this.scene.start("Game");
 			})
 			.on("pointerout", () => {
-				play.setTexture("play-button-inactive");
+				this.play.setTexture("play-button-inactive");
 			})
 			.on("pointerup", () => {
-				play.setTexture("play-button-inactive");
+				this.play.setTexture("play-button-inactive");
 			});
 
-		const credits = this.add
+		this.credits = this.add
 			.sprite(400, 400, "credits-button-inactive")
 			.setScale(0.5)
 			.setInteractive()
 			.on("pointerdown", () => {
-				credits.setTexture("credits-button-active");
+				this.credits.setTexture("credits-button-active");
 				this.scene.start("Credits");
 			})
 			.on("pointerout", () => {
-				credits.setTexture("credits-button-inactive");
+				this.credits.setTexture("credits-button-inactive");
 			})
 			.on("pointerup", () => {
-				credits.setTexture("credits-button-inactive");
+				this.credits.setTexture("credits-button-inactive");
 			});
 
-		this.events.on("destroy", () => {
-			play.removeAllListeners();
-			credits.removeAllListeners();
-		});
+		this.events.on("destroy", () => {});
 	}
 
 	update() {}
+
+	destroy() {
+		this.play.removeAllListeners();
+		this.credits.removeAllListeners();
+	}
 }
