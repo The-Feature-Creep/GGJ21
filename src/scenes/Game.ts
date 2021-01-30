@@ -1,9 +1,16 @@
-import CharacterImg from "../assets/character.png";
+import CharacterImg from "../assets/prisoner.png";
+import PlatformImg from "../assets/platform.png";
+import BushImg from "../assets/bush.png";
+import RockImg from "../assets/rock.png";
+import TreeImg from "../assets/tree.png";
 
 export class GameScene extends Phaser.Scene {
-	private player;
-	private cursors;
-	private velocity: Phaser.Math.Vector2;
+	private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+	private ground: Phaser.Types.Physics.Arcade.SpriteWithStaticBody;
+
+	private obstacles: Phaser.GameObjects.Group;
+
+	private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
 	constructor() {
 		super("demo");
@@ -11,46 +18,63 @@ export class GameScene extends Phaser.Scene {
 
 	preload() {
 		this.load.image("char", CharacterImg);
+		this.load.image("platform", PlatformImg);
+		// this.load.image("bush", BushImg);
+		// this.load.image("rock", RockImg);
+		// this.load.image("tree", TreeImg);
 	}
 
 	create() {
-		this.player = this.add.image(400, 450, "char");
-		this.player.scale = 0.2;
+		this.ground = this.physics.add.staticSprite(400, 600, "platform").refreshBody();
+		this.ground.scaleY = 0.1;
+
+		this.player = this.physics.add
+			.sprite(100, 450, "char")
+			.setBounce(0.2)
+			.setCollideWorldBounds(true);
+
+		// this.obstacles = this.add.group();
+		// let bush: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
+		// 	300,
+		// 	550,
+		// 	"bush"
+		// );
+		// bush.scale = 0.2;
+		// let rock: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
+		// 	400,
+		// 	550,
+		// 	"rock"
+		// );
+		// rock.scale = 0.1;
+		// let tree: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody = this.obstacles.create(
+		// 	600,
+		// 	550,
+		// 	"tree"
+		// );
+		// tree.scale = 0.03;
+
+		this.physics.add.collider(this.player, this.ground);
+		// this.physics.add.collider(bush, this.ground);
+		// this.physics.add.collider(rock, this.ground);
+		// this.physics.add.collider(tree, this.ground);
+		// this.physics.add.collider(this.player, bush);
+		// this.physics.add.collider(this.player, rock);
+		// this.physics.add.collider(this.player, tree);
 
 		this.cursors = this.input.keyboard.createCursorKeys();
-		this.velocity = new Phaser.Math.Vector2();
 	}
 
 	update() {
-		// move left and right
 		if (this.cursors.left.isDown) {
-			this.velocity.x -= 2;
+			this.player.setVelocityX(-180);
+			console.log("leftyyyyy");
 		} else if (this.cursors.right.isDown) {
-			this.velocity.x += 2;
+			this.player.setVelocityX(180);
+		} else {
+			this.player.setVelocityX(0);
 		}
-
-		// jump if on ground
-		if (this.cursors.up.isDown && this.player.y >= 450) {
-			this.velocity.y = -30;
+		if (this.cursors.up.isDown && this.player.body.touching.down) {
+			this.player.setVelocityY(-360);
 		}
-
-		this.player.x += this.velocity.x;
-		this.player.y += this.velocity.y;
-
-		// gravity
-		if (this.player.y < 450) this.velocity.y += 2;
-		else this.velocity.y = 0;
-
-		// keep character on screen
-		if (this.player.x < 80) {
-			this.player.x = 80;
-			this.velocity.x = 0;
-		} else if (this.player.x > 800 - 80) {
-			this.player.x = 800 - 80;
-			this.velocity.x = 0;
-		}
-
-		// slow to a stop if no input
-		this.velocity.x *= 0.9;
 	}
 }
