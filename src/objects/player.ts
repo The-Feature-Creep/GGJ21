@@ -1,9 +1,17 @@
 export class Player {
   private sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-  private isHidden: boolean = false;
+  private isHidden: boolean;
   private equipment: Phaser.GameObjects.Sprite;
 
-  constructor() {}
+  constructor(
+    private playerSprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
+    private isHidding: boolean,
+    private playerEquipment: Phaser.GameObjects.Sprite
+  ) {
+    this.sprite = playerSprite;
+    this.isHidden = isHidding;
+    this.equipment = playerEquipment;
+  }
 
   get GetSprite() {
     return this.sprite;
@@ -15,11 +23,6 @@ export class Player {
     return this.equipment;
   }
 
-  set SetSprite(
-    playerSprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
-  ) {
-    this.sprite = playerSprite;
-  }
   set SetHidding(isHidding: boolean) {
     this.isHidden = isHidding;
   }
