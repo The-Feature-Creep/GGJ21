@@ -15,7 +15,11 @@ export class Player {
     return this.equipment;
   }
 
-  set SetSprite();
+  set SetSprite(
+    playerSprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
+  ) {
+    this.sprite = playerSprite;
+  }
   set SetHidding(isHidding: boolean) {
     this.isHidden = isHidding;
   }
