@@ -5,7 +5,7 @@ export const PLAYER_STATIONARY_CYCLE = "prisoner-stand";
 export class Player extends Phaser.Physics.Arcade.Sprite {
 	isHidden: boolean = false;
 	hasShovel: boolean = false;
-	shovelActive: boolean = false;
+	isShovelActive: boolean = false;
 
 	constructor(
 		scene: Phaser.Scene,
@@ -49,23 +49,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 			.setCollideWorldBounds(true);
 	}
 
-	get GetHiding() {
+	get getIsHidden() {
 		return this.isHidden;
 	}
-	get GetHasShovel() {
+	get getHasShovel() {
 		return this.hasShovel;
 	}
-	get GetShovelActive() {
-		return this.shovelActive;
+	get getIsShovelActive() {
+		return this.isShovelActive;
 	}
 
-	set SetHiding(isHiding: boolean) {
+	set setIsHidden(isHiding: boolean) {
 		this.isHidden = isHiding;
 	}
-	set SetHasShovel(hasS: boolean) {
-		this.hasShovel = hasS;
+	set setHasShovel(hasShovel: boolean) {
+		this.hasShovel = hasShovel;
 	}
-	set SetShovelActive(isHiding: boolean) {
-		this.isHidden = isHiding;
+	set setIsShovelActive(isShovelActive: boolean) {
+		this.isShovelActive = isShovelActive;
 	}
 }
