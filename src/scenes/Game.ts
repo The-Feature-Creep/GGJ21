@@ -42,7 +42,6 @@ export class GameScene extends Phaser.Scene {
 		this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
 		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
 		this.load.image("char", CharacterImg);
-		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
 		this.load.image(GROUND_IMAGES_KEY, PlatformImg);
 		this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
 			frameWidth: 98,
@@ -71,6 +70,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.guards.length = 0;
 		this.shovel = new Shovel(this, 800, 395);
 		this.spotlight = new Spotlight(this, 100, 100);
 		this.guards.push(new Guard(this, 100, 300));
