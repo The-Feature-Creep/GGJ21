@@ -1,17 +1,10 @@
-export class Terrain extends Phaser.Physics.Arcade.Sprite {
-  constructor(
-    scene: Phaser.Scene,
-    xPosition: number,
-    yPosition: number,
-    textureURL: string
-  ) {
-    super(scene, xPosition, yPosition, textureURL);
-    scene.add.existing(this);
-    scene.physics.add
-      .existing(this)
-      .setDepth(1000)
-      // .setScale(10, 1)
-      .setImmovable(true)
-      .setCollideWorldBounds(true);
-  }
+export const TERRAIN_KEY = "terrain";
+
+export class Terrain extends Phaser.GameObjects.Rectangle {
+	constructor(scene: Phaser.Scene, xPosition: number, yPosition: number) {
+		super(scene, xPosition, yPosition, 2000, 100, 0xff00aa);
+		scene.add.existing(this);
+		const physics = scene.physics.add.existing(this, true).setDepth(1000);
+		physics.body.gameObject.setCollideWorldBounds = true;
+	}
 }

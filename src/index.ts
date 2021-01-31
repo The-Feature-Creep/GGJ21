@@ -1,4 +1,3 @@
-// import { WinScene } from "./scenes/Win";
 import Phaser from "phaser";
 import { GameScene } from "./scenes/Game";
 import { MainMenuScene } from "./scenes/MainMenu";
