@@ -35,16 +35,18 @@ export class GameScene extends Phaser.Scene {
 	}
 	preload() {
 		// this.load.image(GUARD_IMG_KEY, GuardImg);
+		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
+		this.load.image("char", CharacterImg);
+		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
+		this.load.image(GROUND_IMAGES_KEY, PlatformImg);
 		this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
 			frameWidth: 98,
 			frameHeight: 144,
 		});
-		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
 		this.load.spritesheet(PLAYER_IMG_KEY, CharacterImg, {
 			frameWidth: 100,
 			frameHeight: 119,
 		});
-		this.load.image(GROUND_IMAGES_KEY, PlatformImg);
 		this.load.spritesheet(ROCK_IMG_KEY, RockImg, {
 			frameWidth: 148,
 			frameHeight: 100,
@@ -61,10 +63,6 @@ export class GameScene extends Phaser.Scene {
 			frameWidth: 231,
 			frameHeight: 425,
 		});
-
-		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
-		this.load.image("char", CharacterImg);
-		this.load.image("platform", PlatformImg);
 	}
 
 	create() {
