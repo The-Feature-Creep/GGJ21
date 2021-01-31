@@ -6,10 +6,12 @@ import { ROCK_IMG_KEY, ROCK_HIDE_IMG_KEY, Rock } from "./../objects/rock";
 import {
   PLAYER_IMG_KEY,
   PLAYER_WALK_CYCLE,
+  PLAYER_WALK_CYCLE_LEFT,
   PLAYER_STATIONARY_CYCLE,
   Player,
 } from "./../objects/player";
 import CharacterImg from "./../assets/prisoner.png";
+import CharacterImgLeft from "./../assets/prisoner-left.png";
 import PlatformImg from "./../assets/ground.png";
 import RockImg from "./../assets/rock.png";
 import HideRock from "./../assets/rock-hidden.png";
@@ -47,6 +49,10 @@ export class GameScene extends Phaser.Scene {
       frameWidth: 100,
       frameHeight: 119,
     });
+    this.load.spritesheet(PLAYER_WALK_CYCLE_LEFT, CharacterImgLeft, {
+      frameWidth: 100,
+      frameHeight: 119,
+    });
     this.load.spritesheet(ROCK_IMG_KEY, RockImg, {
       frameWidth: 148,
       frameHeight: 100,
@@ -56,11 +62,11 @@ export class GameScene extends Phaser.Scene {
       frameHeight: 100,
     });
     this.load.spritesheet(TREE_IMG_KEY, TreeImg, {
-      frameWidth: 231,
+      frameWidth: 148,
       frameHeight: 435,
     });
     this.load.spritesheet(TREE_HIDE_IMG_KEY, HideTreeImg, {
-      frameWidth: 231,
+      frameWidth: 148,
       frameHeight: 425,
     });
   }
@@ -70,7 +76,7 @@ export class GameScene extends Phaser.Scene {
     this.guards.push(new Guard(this, 100, 300));
     this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
     this.rock = new Rock(this, 300, 425, ROCK_IMG_KEY);
-    this.tree = new Tree(this, 600, 315, TREE_IMG_KEY);
+    this.tree = new Tree(this, 700, 315, TREE_IMG_KEY);
     this.player = new Player(this, 100, 300, PLAYER_IMG_KEY);
 
     this.guards.forEach((guard) => {
@@ -79,7 +85,6 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.ground);
     this.physics.add.collider(this.rock, this.ground);
     this.physics.add.collider(this.tree, this.ground);
-
     this.physics.add.overlap(
       this.spotlight.sprite,
       this.player,
@@ -112,7 +117,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
   update(time, delta) {
-    // this.controls.update(delta);
+    // this.controls.update(delta)
     if (this.player.body.touching.none) {
       this.timeInBeam = 0;
     }
@@ -145,12 +150,10 @@ export class GameScene extends Phaser.Scene {
       }
     } else {
       if (this.cursors.left.isDown) {
-        this.player.setScale(-1, this.player.scaleY);
-        this.player.anims.play(PLAYER_WALK_CYCLE, true);
+        this.player.anims.play(PLAYER_WALK_CYCLE_LEFT, true);
         this.player.setVelocityX(-180);
       } else if (this.cursors.right.isDown) {
         this.player.setVelocityX(180);
-        this.player.setScale(1, this.player.scaleY);
         this.player.anims.play(PLAYER_WALK_CYCLE, true);
       } else {
         this.player.setVelocityX(0);
