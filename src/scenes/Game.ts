@@ -1,5 +1,5 @@
 import { Fence } from "./../objects/fence";
-import { GUARD_IMG_KEY, Guard } from "./../objects/guard";
+import { GUARD_IMG_KEY, GUARD_2_IMG_KEY, Guard } from "./../objects/guard";
 import { SPOTLIGHT_IMG_KEY, Spotlight } from "./../objects/spotlight";
 import { TREE_IMG_KEY, TREE_HIDE_IMG_KEY, Tree } from "./../objects/tree";
 import { ROCK_IMG_KEY, ROCK_HIDE_IMG_KEY, Rock } from "./../objects/rock";
@@ -21,12 +21,15 @@ import HideRock from "./../assets/rock-hidden.png";
 import TreeImg from "./../assets/tree.png";
 import HideTreeImg from "../assets/tree-hidden.png";
 import GuardImg from "./../assets/guard1.png";
+import GuardImg2 from "./../assets/guard2.png";
 import SpotlightImg from "../assets/spotlight.png";
 import FenceEndImg from "./../assets/fence-end.png";
 import { Shovel, SHOVEL_IMG_KEY, SAND_PILE_IMG_KEY } from "./../objects/shovel";
 import ShovelImg from "./../assets/sandpile-with-spade.png";
 import SandPileImg from "./../assets/sandpile.png";
 import { Terrain } from "../objects/terrain";
+import WallTileImg from "../assets/fence-repeat.png";
+import { WallTileSprite, WALL_TILE_IMG_KEY } from "../objects/wall-tile";
 
 export class GameScene extends Phaser.Scene {
 	private player: Player;
@@ -38,12 +41,14 @@ export class GameScene extends Phaser.Scene {
 	private spotlight: Spotlight;
 	private shovel: Shovel;
 	private timeInBeam: number = 0;
+	private wallTileSprite: WallTileSprite;
 
 	private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 	constructor() {
 		super("Game");
 	}
 	preload() {
+		this.load.image(WALL_TILE_IMG_KEY, WallTileImg);
 		// this.load.image(GUARD_IMG_KEY, GuardImg);
 		this.load.image(SAND_PILE_IMG_KEY, SandPileImg);
 		this.load.image(SHOVEL_IMG_KEY, ShovelImg);
@@ -51,7 +56,11 @@ export class GameScene extends Phaser.Scene {
 		this.load.image("char", CharacterImg);
 		this.load.image("fence-end", FenceEndImg);
 		this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
-			frameWidth: 98,
+			frameWidth: 98.5,
+			frameHeight: 144,
+		});
+		this.load.spritesheet(GUARD_2_IMG_KEY, GuardImg2, {
+			frameWidth: 98.5,
 			frameHeight: 144,
 		});
 		this.load.spritesheet(PLAYER_IMG_KEY, CharacterImg, {
@@ -102,6 +111,8 @@ export class GameScene extends Phaser.Scene {
 
 		this.cameras.cameras[0].startFollow(this.player);
 		this.cameras.cameras[0].setFollowOffset(this.player.x, 150);
+
+		this.wallTileSprite = new WallTileSprite(this, -253, 435, 600, 150);
 
 		this.guards.forEach((guard) => {
 			this.physics.add.collider(guard, this.terrain); // makes guard collide with terrain
