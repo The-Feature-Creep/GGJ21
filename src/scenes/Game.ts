@@ -1,18 +1,18 @@
-import { GUARD_IMG_KEY, Guard } from "./../objects/guard";
-import { SPOTLIGHT_IMG_KEY, Spotlight } from "../objects/spotlight";
-import { Ground, GROUND_IMAGES_KEY } from "./../objects/ground";
-import { TREE_IMAGES_KEY, Tree } from "../objects/tree";
-import { ROCK_IMAGES_KEY, Rock } from "../objects/rock";
-import { PLAYER_IMAGES_KEY, Player } from "../objects/player";
-import CharacterImg from "../assets/prisoner.png";
-import PlatformImg from "../assets/ground.png";
-import RockImg from "../assets/rock.png";
-import HideRock from "../assets/rock-hidden.png";
-import TreeImg from "../assets/tree.png";
-import HideTreeImg from "../assets/tree-hidden.png";
-import GuardImg from "./../assets/guard.png";
-import SpotlightImg from "../assets/spotlight.png";
-import { Shovel } from "./../objects/shovel";
+import { GUARD_IMG_KEY, Guard } from './../objects/guard';
+import { SPOTLIGHT_IMG_KEY, Spotlight } from '../objects/spotlight';
+import { Ground, GROUND_IMAGES_KEY } from './../objects/ground';
+import { TREE_IMAGES_KEY, Tree } from '../objects/tree';
+import { ROCK_IMAGES_KEY, Rock } from '../objects/rock';
+import { PLAYER_IMAGES_KEY, Player } from '../objects/player';
+import CharacterImg from '../assets/prisoner.png';
+import PlatformImg from '../assets/ground.png';
+import RockImg from '../assets/rock.png';
+import HideRock from '../assets/rock-hidden.png';
+import TreeImg from '../assets/tree.png';
+import HideTreeImg from '../assets/tree-hidden.png';
+import GuardImg from './../assets/guard.png';
+import SpotlightImg from '../assets/spotlight.png';
+import { Shovel } from './../objects/shovel';
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
@@ -22,11 +22,12 @@ export class GameScene extends Phaser.Scene {
   private guards: Guard[] = [];
   private spotlight: Spotlight;
   private shovel: Shovel;
+  private timeInBeam: number = 0;
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private controls: Phaser.Cameras.Controls.SmoothedKeyControl;
   constructor() {
-    super("Game");
+    super('Game');
   }
   preload() {
     this.load.image(GUARD_IMG_KEY, GuardImg);
@@ -40,7 +41,7 @@ export class GameScene extends Phaser.Scene {
       frameWidth: 148,
       frameHeight: 100,
     });
-    this.load.spritesheet("hide-rock", HideRock, {
+    this.load.spritesheet('hide-rock', HideRock, {
       frameWidth: 148,
       frameHeight: 100,
     });
@@ -48,7 +49,7 @@ export class GameScene extends Phaser.Scene {
       frameWidth: 231,
       frameHeight: 435,
     });
-    this.load.spritesheet("hide-tree", HideTreeImg, {
+    this.load.spritesheet('hide-tree', HideTreeImg, {
       frameWidth: 231,
       frameHeight: 425,
     });
@@ -87,8 +88,8 @@ export class GameScene extends Phaser.Scene {
 
     //#region Anims
     this.anims.create({
-      key: "hide-rock",
-      frames: [{ key: "hide-rock", frame: 0 }],
+      key: 'hide-rock',
+      frames: [{ key: 'hide-rock', frame: 0 }],
       frameRate: 10,
       repeat: -1,
     });
@@ -99,8 +100,8 @@ export class GameScene extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: "hide-tree",
-      frames: [{ key: "hide-tree", frame: 0 }],
+      key: 'hide-tree',
+      frames: [{ key: 'hide-tree', frame: 0 }],
       frameRate: 10,
       repeat: -1,
     });
@@ -111,7 +112,7 @@ export class GameScene extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: "right-walk",
+      key: 'right-walk',
       frames: this.anims.generateFrameNumbers(PLAYER_IMAGES_KEY, {
         start: 0,
         end: 7,
@@ -120,7 +121,7 @@ export class GameScene extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: "stand",
+      key: 'stand',
       frames: this.anims.generateFrameNumbers(PLAYER_IMAGES_KEY, {
         start: 0,
         end: 0,
@@ -129,26 +130,42 @@ export class GameScene extends Phaser.Scene {
       repeat: -1,
     });
     //#endregion
+    this.physics.add.overlap(
+      this.spotlight.sprite,
+      this.player,
+      (onCollide) => {
+        this.spotlightCollideWithPlayer();
+      }
+    );
   }
 
+  spotlightCollideWithPlayer() {
+    if (this.timeInBeam >= 35) {
+      console.log('Gane Ends');
+    } else if (!this.player.isHidden) {
+      this.timeInBeam += 1;
+    }
+  }
   update(time, delta) {
     // this.controls.update(delta);
-
+    if (this.player.body.touching.none) {
+      this.timeInBeam = 0;
+    }
     this.spotlight.update();
     this.guards.forEach((guard) => {
       guard.updatePosition();
     });
     if (this.cursors.left.isDown) {
       this.player.setScale(-1, this.player.scaleY);
-      this.player.anims.play("right-walk", true);
+      this.player.anims.play('right-walk', true);
       this.player.setVelocityX(-180);
     } else if (this.cursors.right.isDown) {
       this.player.setVelocityX(180);
       this.player.setScale(1, this.player.scaleY);
-      this.player.anims.play("right-walk", true);
+      this.player.anims.play('right-walk', true);
     } else {
       this.player.setVelocityX(0);
-      this.player.anims.play("stand", true);
+      this.player.anims.play('stand', true);
     }
     if (this.cursors.up.isDown) {
       if (this.player.GetHiding) {
@@ -174,14 +191,14 @@ export class GameScene extends Phaser.Scene {
   }
   private hide(object: string) {
     switch (object) {
-      case "rock":
+      case 'rock':
         this.player.setVisible(false);
-        this.rock.anims.play("hide-rock", true);
+        this.rock.anims.play('hide-rock', true);
         this.player.SetHiding = true;
         return;
-      case "tree":
+      case 'tree':
         this.player.setVisible(false);
-        this.tree.anims.play("hide-tree", true);
+        this.tree.anims.play('hide-tree', true);
         this.player.SetHiding = true;
         return;
 
@@ -191,12 +208,12 @@ export class GameScene extends Phaser.Scene {
   }
   private unhide(object: string) {
     switch (object) {
-      case "rock":
+      case 'rock':
         this.player.setVisible(true);
         this.rock.anims.play(ROCK_IMAGES_KEY, true);
         this.player.SetHiding = false;
         return;
-      case "tree":
+      case 'tree':
         this.player.setVisible(true);
         this.tree.anims.play(TREE_IMAGES_KEY, true);
         this.player.SetHiding = false;
