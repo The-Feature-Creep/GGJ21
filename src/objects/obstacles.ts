@@ -10,7 +10,8 @@ export class Obstacles extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add
       .existing(this)
       .setImmovable(true)
-      .setCollideWorldBounds(true);
+      .setCollideWorldBounds(true)
+      .refreshBody();
     this.body = this.body as Phaser.Physics.Arcade.Body;
     this.body.setAllowGravity(false);
   }

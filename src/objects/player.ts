@@ -1,9 +1,10 @@
-// import { PLAYER_WALK_CYCLE } from './player';
-export const PLAYER_IMG_KEY = 'prisoner';
-export const PLAYER_WALK_CYCLE = 'prisoner-walk';
-export const PLAYER_STATIONARY_CYCLE = 'prisoner-stand';
-export const PLAYER_WALK_SHOVEL_CYCLE = 'prisoner-walk-shovel';
-export const PLAYER_STATIONARY_SHOVEL_CYCLE = 'prisoner-stand-shovel';
+export const PLAYER_IMG_KEY = "prisoner";
+export const PLAYER_WALK_CYCLE = "prisoner-walk";
+export const PLAYER_WALK_CYCLE_LEFT = "prisoner-walk-left";
+export const PLAYER_STATIONARY_CYCLE = "prisoner-stand";
+export const PLAYER_WALK_SHOVEL_CYCLE = "prisoner-walk-shovel";
+export const PLAYER_WALK_SHOVEL_CYCLE_LEFT = "prisoner-walk-shovel-left";
+export const PLAYER_STATIONARY_SHOVEL_CYCLE = "prisoner-stand-shovel";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   isHidden: boolean = false;
@@ -18,7 +19,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   ) {
     super(scene, xPosition, yPosition, textureURL);
     scene.add.existing(this);
-
     this.animations(scene);
     this.physics(scene.physics);
   }
@@ -27,6 +27,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.anims.create({
       key: PLAYER_WALK_CYCLE,
       frames: scene.anims.generateFrameNumbers(PLAYER_IMG_KEY, {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: PLAYER_WALK_CYCLE_LEFT,
+      frames: scene.anims.generateFrameNumbers(PLAYER_WALK_CYCLE_LEFT, {
         start: 0,
         end: 7,
       }),
@@ -45,6 +54,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.anims.create({
       key: PLAYER_WALK_SHOVEL_CYCLE,
       frames: scene.anims.generateFrameNumbers(PLAYER_IMG_KEY, {
+        start: 8,
+        end: 15,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: PLAYER_WALK_SHOVEL_CYCLE_LEFT,
+      frames: scene.anims.generateFrameNumbers(PLAYER_WALK_SHOVEL_CYCLE_LEFT, {
         start: 8,
         end: 15,
       }),
