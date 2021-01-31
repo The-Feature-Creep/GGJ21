@@ -1,3 +1,5 @@
+import { GUARD_IMG_KEY, Guard } from "./../objects/guard";
+import { SPOTLIGHT_IMG_KEY, Spotlight } from "../objects/spotlight";
 import { Ground, GROUND_IMAGES_KEY } from "./../objects/ground";
 import { TREE_IMAGES_KEY, Tree } from "../objects/tree";
 import { ROCK_IMAGES_KEY, Rock } from "../objects/rock";
@@ -8,21 +10,24 @@ import RockImg from "../assets/rock.png";
 import HideRock from "../assets/rock-hidden.png";
 import TreeImg from "../assets/tree.png";
 import HideTreeImg from "../assets/tree-hidden.png";
+import GuardImg from "./../assets/guard.png";
+import SpotlightImg from "../assets/spotlight.png";
+import { Shovel } from "./../objects/shovel";
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
   private rock: Rock;
   private tree: Tree;
   private ground: Ground;
+  private guards: Guard[] = [];
+  private spotlight: Spotlight;
+  private shovel: Shovel;
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private controls: Phaser.Cameras.Controls.SmoothedKeyControl;
-
-  constructor() {
-    super("Game");
-  }
-
   preload() {
+    this.load.image(GUARD_IMG_KEY, GuardImg);
+    this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
     this.load.spritesheet(PLAYER_IMAGES_KEY, CharacterImg, {
       frameWidth: 100,
       frameHeight: 119,
@@ -47,6 +52,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.spotlight = new Spotlight(this, 100, 100);
+    this.guards.push(new Guard(this, 100, 425));
     this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
     this.rock = new Rock(this, 300, 425, ROCK_IMAGES_KEY);
     this.tree = new Tree(this, 600, 315, TREE_IMAGES_KEY);
@@ -119,6 +126,11 @@ export class GameScene extends Phaser.Scene {
 
   update(time, delta) {
     // this.controls.update(delta);
+
+    this.spotlight.update();
+    this.guards.forEach((guard) => {
+      guard.updatePosition();
+    });
     if (this.cursors.left.isDown) {
       this.player.setScale(-1, this.player.scaleY);
       this.player.anims.play("right-walk", true);

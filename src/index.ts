@@ -1,15 +1,15 @@
-import Phaser from "phaser";
-import { GameScene } from "./scenes/Game";
-import { MainMenuScene } from "./scenes/MainMenu";
-import { CreditScene } from "./scenes/Credits";
+import Phaser from 'phaser';
+import { GameScene } from './scenes/Game';
+import { MainMenuScene } from './scenes/MainMenu';
+import { CreditScene } from './scenes/Credits';
 
-const config = {
+export const config = {
   type: Phaser.AUTO,
-  parent: "phaser-example",
+  parent: 'phaser-example',
   width: 1000,
   height: 500,
   physics: {
-    default: "arcade",
+    default: 'arcade',
     arcade: {
       gravity: { y: 300 },
       debug: false,
