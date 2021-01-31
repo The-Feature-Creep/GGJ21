@@ -24,7 +24,6 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		var key = Math.random() > .5 ? GUARD_IMG_KEY : GUARD_2_IMG_KEY;
-		console.log(key);
 		super(scene, x, y, key);
 
 		this.key = key;
