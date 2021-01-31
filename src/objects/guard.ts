@@ -16,12 +16,12 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 		this.isStationary = false;
 		this.velocity = 0.8;
 		scene.add.existing(this);
-		scene.physics.add // This gives the sprite a dynamic body
-			.existing(this)
-			.setDepth(999) // change render order (z-index) to keep it above obstacles
-			.setSize(100, 127) // size offset for collision with the ground
-			.setBounce(0.2)
-			.setCollideWorldBounds(true);
+		this.animations(scene);
+		this.physics(scene.physics);
+		this.setDestination();
+	}
+
+	private animations(scene: Phaser.Scene) {
 		scene.anims.create({
 			key: GUARD_WALK_CYCLE,
 			frames: scene.anims.generateFrameNumbers(GUARD_IMG_KEY, {
@@ -40,7 +40,15 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 			frameRate: 24,
 			repeat: -1,
 		});
-		this.setDestination();
+	}
+
+	private physics(physics: Phaser.Physics.Arcade.ArcadePhysics) {
+		physics.add // This gives the sprite a dynamic body
+			.existing(this)
+			.setDepth(999) // change render order (z-index) to keep it above obstacles
+			.setSize(100, 127) // size offset for collision with the ground
+			.setBounce(0.2)
+			.setCollideWorldBounds(true);
 	}
 
 	updatePosition() {
