@@ -119,6 +119,15 @@ export class GameScene extends Phaser.Scene {
 		this.spotlight.update();
 		this.guards.forEach((guard) => {
 			guard.updatePosition();
+			if (
+				guard.canSeePlayer(
+					this.player.x,
+					this.player.y,
+					this.player.getIsHidden
+				)
+			) {
+				console.log("Guard Can see you!");
+			}
 		});
 		if (this.cursors.left.isDown) {
 			this.player.setScale(-1, this.player.scaleY);
@@ -133,7 +142,7 @@ export class GameScene extends Phaser.Scene {
 			this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
 		}
 		if (this.cursors.up.isDown) {
-			if (this.player.GetHiding) {
+			if (this.player.getIsHidden) {
 				if (this.physics.overlap(this.player, this.rock)) {
 					this.unhide(ROCK_IMG_KEY);
 				}
@@ -143,7 +152,7 @@ export class GameScene extends Phaser.Scene {
 				}
 			}
 		} else if (this.cursors.down.isDown) {
-			if (this.player.GetHiding) {
+			if (this.player.getIsHidden) {
 				if (this.physics.overlap(this.player, this.tree)) {
 					this.unhide(TREE_IMG_KEY);
 				}
@@ -159,12 +168,12 @@ export class GameScene extends Phaser.Scene {
 			case "rock":
 				this.player.setVisible(false);
 				this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
-				this.player.SetHiding = true;
+				this.player.setIsHidden = true;
 				return;
 			case "tree":
 				this.player.setVisible(false);
 				this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
-				this.player.SetHiding = true;
+				this.player.setIsHidden = true;
 				return;
 
 			default:
@@ -176,16 +185,20 @@ export class GameScene extends Phaser.Scene {
 			case "rock":
 				this.player.setVisible(true);
 				this.rock.anims.play(ROCK_IMG_KEY, true);
-				this.player.SetHiding = false;
+				this.player.setIsHidden = false;
 				return;
 			case "tree":
 				this.player.setVisible(true);
 				this.tree.anims.play(TREE_IMG_KEY, true);
-				this.player.SetHiding = false;
+				this.player.setIsHidden = false;
 				return;
 
 			default:
 				break;
 		}
+	}
+
+	getGround() {
+		return this.ground;
 	}
 }

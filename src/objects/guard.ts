@@ -2,6 +2,8 @@ export const GUARD_IMG_KEY = "guard";
 export const GUARD_WALK_CYCLE = "guard-walk-cycle";
 export const GUARD_STATIONARY_CYCLE = "guard-stationary-cycle";
 
+const viewDistance = 100;
+
 export class Guard extends Phaser.Physics.Arcade.Sprite {
 	private isKnockedOut: boolean;
 	private iPosition: number;
@@ -70,6 +72,29 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 			this.anims.play(GUARD_STATIONARY_CYCLE, true);
 			// console.log(SpriteSheetFrames);
 		}
+	}
+
+	canSeePlayer(
+		playerX: number,
+		playerY: number,
+		isPlayerHidden: boolean
+	): boolean {
+		if (!isPlayerHidden) {
+			let maxFOV;
+			if (this.fPosition > this.iPosition) {
+				maxFOV = this.x + viewDistance;
+				if (playerX < maxFOV && playerX > this.x) {
+					// Player is between player and maxFOV
+					return true;
+				}
+			} else {
+				maxFOV = this.x - viewDistance;
+				if (playerX > maxFOV && playerX < this.x) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private setDestination() {
