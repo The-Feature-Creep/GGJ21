@@ -11,17 +11,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 	hasShovel: boolean = false;
 	isShovelActive: boolean = false;
 
-	constructor(
-		scene: Phaser.Scene,
-		xPosition: number,
-		yPosition: number,
-		textureURL: string
-	) {
-		super(scene, xPosition, yPosition, textureURL);
-		scene.add.existing(this);
-		this.animations(scene);
-		this.physics(scene.physics);
-	}
+  constructor(
+    scene: Phaser.Scene,
+    xPosition: number,
+    yPosition: number,
+    textureURL: string
+  ) {
+    super(scene, xPosition, yPosition, textureURL);
+    scene.add.existing(this);
+    this.animations(scene);
+    this.physics(scene.physics);
+  }
 
 	private animations(scene: Phaser.Scene) {
 		scene.anims.create({

@@ -173,11 +173,7 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 			}
 		}
 
-		if (this.fPosition < this.iPosition) {
-			this.setScale(-1, this.scaleY);
-		} else {
-			this.setScale(1, this.scaleY);
-		}
+		this.setFlipX(this.fPosition < this.iPosition);
 	}
 
 	private setStationary() {

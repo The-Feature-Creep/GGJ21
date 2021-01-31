@@ -74,19 +74,19 @@ export class GameScene extends Phaser.Scene {
     });
     this.load.spritesheet(PLAYER_IMG_KEY, CharacterImg, {
       frameWidth: 100,
-      frameHeight: 119,
+      frameHeight: 119.5,
     });
     this.load.spritesheet(PLAYER_WALK_CYCLE_LEFT, CharacterImgLeft, {
       frameWidth: 100,
-      frameHeight: 119,
+      frameHeight: 119.5,
     });
     this.load.spritesheet(PLAYER_WALK_SHOVEL_CYCLE_LEFT, CharacterImgLeft, {
       frameWidth: 100,
-      frameHeight: 119,
+      frameHeight: 119.5,
     });
     this.load.spritesheet(PLAYER_WALK_SHOVEL_CYCLE, CharacterImg, {
       frameWidth: 100,
-      frameHeight: 119,
+      frameHeight: 119.5,
     });
     this.load.spritesheet(ROCK_IMG_KEY, RockImg, {
       frameWidth: 148,
@@ -178,7 +178,7 @@ export class GameScene extends Phaser.Scene {
     //character picks up shovel
     //shovel disappears
     this.player.hasShovel = true;
-    this.shovel.sprite.disableBody(undefined, true);
+    // this.shovel.sprite.disableBody(undefined, true);
   }
 
   spotlightCollideWithPlayer() {
@@ -235,11 +235,13 @@ export class GameScene extends Phaser.Scene {
         }
       } else {
         if (this.cursors.left.isDown) {
-          this.player.anims.play(PLAYER_WALK_CYCLE_LEFT, true);
+          this.player.anims.play(PLAYER_WALK_CYCLE, true);
           this.player.setVelocityX(-180);
+          this.player.setFlipX(true);
         } else if (this.cursors.right.isDown) {
           this.player.setVelocityX(180);
           this.player.anims.play(PLAYER_WALK_CYCLE, true);
+          this.player.setFlipX(false);
         } else {
           this.player.setVelocityX(0);
           this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
@@ -248,56 +250,49 @@ export class GameScene extends Phaser.Scene {
           if (this.physics.overlap(this.player, this.tree)) {
             this.player.setVelocityX(0);
             this.hide(TREE_IMG_KEY);
-            this.blows.play();
           }
         } else if (this.cursors.down.isDown) {
           if (this.physics.overlap(this.player, this.rock)) {
             this.player.setVelocityX(0);
             this.hide(ROCK_IMG_KEY);
-            this.blows.play();
           }
         }
       }
     } else {
-      if (this.player.isHidden) {
-        if (this.cursors.up.isDown) {
-          if (this.physics.overlap(this.player, this.rock)) {
-            this.unhide(ROCK_IMG_KEY);
-            this.blows.play();
-          }
-        } else if (this.cursors.down.isDown) {
-          if (this.physics.overlap(this.player, this.tree)) {
-            this.unhide(TREE_IMG_KEY);
-            this.blows.play();
-          }
-        } else {
-          this.player.setVelocityX(0);
-          this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
-        }
+      if (this.cursors.left.isDown) {
+        this.player.anims.play(PLAYER_WALK_CYCLE, true);
+        this.player.setVelocityX(-180);
+        this.player.setFlipX(true);
+      } else if (this.cursors.right.isDown) {
+        this.player.setVelocityX(180);
+        this.player.anims.play(PLAYER_WALK_CYCLE, true);
+        this.player.setFlipX(false);
       } else {
-        if (this.cursors.left.isDown) {
-          this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE_LEFT, true);
-          this.player.setVelocityX(-180);
-        } else if (this.cursors.right.isDown) {
-          this.player.setVelocityX(180);
-          this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
-        } else {
+        this.player.setVelocityX(0);
+        this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+      }
+      if (this.cursors.up.isDown) {
+        if (this.physics.overlap(this.player, this.tree)) {
           this.player.setVelocityX(0);
-          this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
+          this.hide(TREE_IMG_KEY);
         }
-
-        if (this.cursors.up.isDown) {
-          if (this.physics.overlap(this.player, this.tree)) {
-            this.player.setVelocityX(0);
-            this.hide(TREE_IMG_KEY);
-            this.blows.play();
-          }
-        } else if (this.cursors.down.isDown) {
-          if (this.physics.overlap(this.player, this.rock)) {
-            this.player.setVelocityX(0);
-            this.hide(ROCK_IMG_KEY);
-            this.blows.play();
-          }
+      } else if (this.cursors.down.isDown) {
+        if (this.physics.overlap(this.player, this.rock)) {
+          this.player.setVelocityX(0);
+          this.hide(ROCK_IMG_KEY);
+        }
+      }
+      if (this.cursors.up.isDown) {
+        if (this.physics.overlap(this.player, this.tree)) {
+          this.player.setVelocityX(0);
+          this.hide(TREE_IMG_KEY);
+          this.blows.play();
+        }
+      } else if (this.cursors.down.isDown) {
+        if (this.physics.overlap(this.player, this.rock)) {
+          this.player.setVelocityX(0);
+          this.hide(ROCK_IMG_KEY);
+          this.blows.play();
         }
       }
     }
