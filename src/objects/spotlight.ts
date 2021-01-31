@@ -12,6 +12,7 @@ interface boundaryHit {
 }
 
 export class Spotlight {
+  sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private scene: Phaser.Scene;
   private startingX: number;
   private startingY: number;
@@ -23,7 +24,6 @@ export class Spotlight {
     x: 0,
     y: 0,
   };
-  image: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene, startingX: number, startingY: number) {
     this.scene = scene;
@@ -32,11 +32,15 @@ export class Spotlight {
     this.addSpotlight();
     this.update();
   }
+
   private addSpotlight() {
-    this.image = this.scene.add
-      .image(this.startingX, this.startingY, SPOTLIGHT_IMG_KEY)
+    this.sprite = this.scene.physics.add
+      .sprite(this.startingX, this.startingY, SPOTLIGHT_IMG_KEY)
+      .setCollideWorldBounds(true)
       .setDepth(2);
-    this.image.scale = 0.3;
+    this.sprite.body.setAllowGravity(false);
+
+    this.sprite.scale = 0.5;
     this.startMovement();
   }
 
@@ -100,19 +104,22 @@ export class Spotlight {
   }
 
   update(x?: number, y?: number) {
+    // this.zone.x = this.sprite.x;
+    // this.zone.y = this.sprite.y;
+
     if (x !== undefined && y !== undefined) {
-      this.image.x = x;
-      this.image.y = y;
+      this.sprite.x = x;
+      this.sprite.y = y;
       return;
     }
-    const imageVector = new Phaser.Math.Vector2(this.image.x, this.image.y);
+    const imageVector = new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
 
     const dist = Phaser.Math.Distance.BetweenPoints(this.point, imageVector);
 
     this.velocity.x +=
-      ((this.point.x - this.image.x) / dist) * ACCELERATION_MODIFER;
+      ((this.point.x - this.sprite.x) / dist) * ACCELERATION_MODIFER;
     this.velocity.y +=
-      ((this.point.y - this.image.y) / dist) * ACCELERATION_MODIFER;
+      ((this.point.y - this.sprite.y) / dist) * ACCELERATION_MODIFER;
 
     this.velocity.x =
       this.velocity.x > MAX_VELOCITY
@@ -127,20 +134,20 @@ export class Spotlight {
         ? MAX_VELOCITY * -1
         : this.velocity.y;
 
-    this.image.x += this.velocity.x;
-    this.image.y += this.velocity.y;
+    this.sprite.x += this.velocity.x;
+    this.sprite.y += this.velocity.y;
 
     let boundaryHit: boundaryHit;
-    if (this.image.x >= config.width - MAX_WIDTH_MODIFIER && this.velocity.x) {
+    if (this.sprite.x >= config.width - MAX_WIDTH_MODIFIER && this.velocity.x) {
       this.velocity.x = 0;
-      this.image.x = config.width - MAX_WIDTH_MODIFIER;
+      this.sprite.x = config.width - MAX_WIDTH_MODIFIER;
       boundaryHit = {
         dimension: 'x',
         boundary: 'max',
       };
-    } else if (this.image.x <= MAX_WIDTH_MODIFIER && this.velocity.x) {
+    } else if (this.sprite.x <= MAX_WIDTH_MODIFIER && this.velocity.x) {
       this.velocity.x = 0;
-      this.image.x = MAX_WIDTH_MODIFIER;
+      this.sprite.x = MAX_WIDTH_MODIFIER;
       boundaryHit = {
         dimension: 'x',
         boundary: 'min',
@@ -148,21 +155,21 @@ export class Spotlight {
     }
 
     if (
-      this.image.y >= config.height - MAX_HEIGHT_MODIFIER &&
+      this.sprite.y >= config.height - MAX_HEIGHT_MODIFIER &&
       this.velocity.y
     ) {
       this.velocity.y = 0;
-      this.image.y = config.height - MAX_HEIGHT_MODIFIER;
+      this.sprite.y = config.height - MAX_HEIGHT_MODIFIER;
       boundaryHit = {
         dimension: 'y',
         boundary: 'max',
       };
     } else if (
-      this.image.y <= MAX_HEIGHT_MODIFIER + SKY_HEIGHT_MODIFIER &&
+      this.sprite.y <= MAX_HEIGHT_MODIFIER + SKY_HEIGHT_MODIFIER &&
       this.velocity.y
     ) {
       this.velocity.y = 0;
-      this.image.y = MAX_HEIGHT_MODIFIER + SKY_HEIGHT_MODIFIER;
+      this.sprite.y = MAX_HEIGHT_MODIFIER + SKY_HEIGHT_MODIFIER;
       boundaryHit = {
         dimension: 'y',
         boundary: 'min',
