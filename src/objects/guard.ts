@@ -50,7 +50,7 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 			.setDepth(999) // change render order (z-index) to keep it above obstacles
 			.setSize(100, 127) // size offset for collision with the ground
 			.setBounce(0.2)
-			.setCollideWorldBounds(true);
+			.setCollideWorldBounds(false);
 	}
 
 	updatePosition() {
