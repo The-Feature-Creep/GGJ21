@@ -1,5 +1,5 @@
 import { Fence } from "./../objects/fence";
-import { GUARD_IMG_KEY, Guard } from "./../objects/guard";
+import { GUARD_IMG_KEY, GUARD_2_IMG_KEY, Guard } from "./../objects/guard";
 import { SPOTLIGHT_IMG_KEY, Spotlight } from "./../objects/spotlight";
 import { Ground, GROUND_IMAGES_KEY } from "./../objects/ground";
 import { TREE_IMG_KEY, TREE_HIDE_IMG_KEY, Tree } from "./../objects/tree";
@@ -23,6 +23,7 @@ import HideRock from "./../assets/rock-hidden.png";
 import TreeImg from "./../assets/tree.png";
 import HideTreeImg from "../assets/tree-hidden.png";
 import GuardImg from "./../assets/guard1.png";
+import GuardImg2 from "./../assets/guard2.png";
 import SpotlightImg from "../assets/spotlight.png";
 import FenceEndImg from "./../assets/fence-end.png";
 import { Shovel, SHOVEL_IMAGE_KEY } from "./../objects/shovel";
@@ -55,7 +56,11 @@ export class GameScene extends Phaser.Scene {
 		this.load.image(GROUND_IMAGES_KEY, PlatformImg);
 		this.load.image("fence-end", FenceEndImg);
 		this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
-			frameWidth: 98,
+			frameWidth: 98.5,
+			frameHeight: 144,
+		});
+		this.load.spritesheet(GUARD_2_IMG_KEY, GuardImg2, {
+			frameWidth: 98.5,
 			frameHeight: 144,
 		});
 		this.load.spritesheet(PLAYER_IMG_KEY, CharacterImg, {
