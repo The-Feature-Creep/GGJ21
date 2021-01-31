@@ -73,19 +73,19 @@ export class GameScene extends Phaser.Scene {
       frameHeight: 144,
     });
     this.load.spritesheet(PLAYER_IMG_KEY, CharacterImg, {
-      frameWidth: 100,
+      frameWidth: 103,
       frameHeight: 119.5,
     });
     this.load.spritesheet(PLAYER_WALK_CYCLE_LEFT, CharacterImgLeft, {
-      frameWidth: 100,
+      frameWidth: 103,
       frameHeight: 119.5,
     });
     this.load.spritesheet(PLAYER_WALK_SHOVEL_CYCLE_LEFT, CharacterImgLeft, {
-      frameWidth: 100,
+      frameWidth: 103,
       frameHeight: 119.5,
     });
     this.load.spritesheet(PLAYER_WALK_SHOVEL_CYCLE, CharacterImg, {
-      frameWidth: 100,
+      frameWidth: 103,
       frameHeight: 119.5,
     });
     this.load.spritesheet(ROCK_IMG_KEY, RockImg, {

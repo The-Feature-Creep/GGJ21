@@ -13,7 +13,7 @@ export const config = {
 		default: "arcade",
 		arcade: {
 			gravity: { y: 300 },
-			debug: true,
+			debug: false,
 		},
 	},
 	backgroundColor: "#633CA6",
