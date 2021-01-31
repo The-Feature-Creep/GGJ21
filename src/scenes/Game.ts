@@ -130,6 +130,9 @@ export class GameScene extends Phaser.Scene {
         if (this.physics.overlap(this.player, this.tree)) {
           this.unhide(TREE_IMG_KEY);
         }
+      } else {
+        this.player.setVelocityX(0);
+        this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
       }
     } else {
       if (this.cursors.left.isDown) {
@@ -147,10 +150,12 @@ export class GameScene extends Phaser.Scene {
 
       if (this.cursors.up.isDown) {
         if (this.physics.overlap(this.player, this.tree)) {
+          this.player.setVelocityX(0);
           this.hide(TREE_IMG_KEY);
         }
       } else if (this.cursors.down.isDown) {
         if (this.physics.overlap(this.player, this.rock)) {
+          this.player.setVelocityX(0);
           this.hide(ROCK_IMG_KEY);
         }
       }
