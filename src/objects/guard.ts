@@ -2,7 +2,7 @@ export const GUARD_IMG_KEY = "guard";
 export const GUARD_WALK_CYCLE = "guard-walk-cycle";
 export const GUARD_STATIONARY_CYCLE = "guard-stationary-cycle";
 
-export class Guard extends Phaser.GameObjects.Sprite {
+export class Guard extends Phaser.Physics.Arcade.Sprite {
 	private isKnockedOut: boolean;
 	private iPosition: number;
 	private fPosition: number;
@@ -11,15 +11,18 @@ export class Guard extends Phaser.GameObjects.Sprite {
 
 	private velocity: number;
 
-	private walkCycle: Phaser.Animations.Animation | false;
-	private stationaryCycle: Phaser.Animations.Animation | false;
-
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		super(scene, x, y, GUARD_IMG_KEY);
 		this.isStationary = false;
 		this.velocity = 0.8;
 		scene.add.existing(this);
-		this.walkCycle = scene.anims.create({
+		scene.physics.add // This gives the sprite a dynamic body
+			.existing(this)
+			.setDepth(999) // change render order (z-index) to keep it above obstacles
+			.setSize(100, 127) // size offset for collision with the ground
+			.setBounce(0.2)
+			.setCollideWorldBounds(true);
+		scene.anims.create({
 			key: GUARD_WALK_CYCLE,
 			frames: scene.anims.generateFrameNumbers(GUARD_IMG_KEY, {
 				start: 1,
@@ -28,7 +31,7 @@ export class Guard extends Phaser.GameObjects.Sprite {
 			frameRate: 24,
 			repeat: -1,
 		});
-		this.stationaryCycle = scene.anims.create({
+		scene.anims.create({
 			key: GUARD_STATIONARY_CYCLE,
 			frames: scene.anims.generateFrameNumbers(GUARD_IMG_KEY, {
 				start: 0,

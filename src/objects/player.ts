@@ -1,29 +1,41 @@
-export class Player {
-  private sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-  private isHidden: boolean;
-  private equipment: Phaser.GameObjects.Sprite;
+export const PLAYER_IMAGES_KEY = "prisoner";
+export class Player extends Phaser.Physics.Arcade.Sprite {
+  isHidden: boolean = false;
+  hasShovel: boolean = false;
+  shovelActive: boolean = false;
 
   constructor(
-    private playerSprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
-    private isHidding: boolean,
-    private playerEquipment: Phaser.GameObjects.Sprite
+    scene: Phaser.Scene,
+    xPosition: number,
+    yPosition: number,
+    textureURL: string
   ) {
-    this.sprite = playerSprite;
-    this.isHidden = isHidding;
-    this.equipment = playerEquipment;
+    super(scene, xPosition, yPosition, textureURL);
+    scene.add.existing(this);
+    scene.physics.add
+      .existing(this)
+      .setSize(100, 110)
+      .setBounce(0.2)
+      .setCollideWorldBounds(true);
   }
 
-  get GetSprite() {
-    return this.sprite;
-  }
-  get GetHidding() {
+  get GetHiding() {
     return this.isHidden;
   }
-  get GetEquipment() {
-    return this.equipment;
+  get GetHasShovel() {
+    return this.hasShovel;
+  }
+  get GetShovelActive() {
+    return this.shovelActive;
   }
 
-  set SetHidding(isHidding: boolean) {
-    this.isHidden = isHidding;
+  set SetHiding(isHiding: boolean) {
+    this.isHidden = isHiding;
+  }
+  set SetHasShovel(hasS: boolean) {
+    this.hasShovel = hasS;
+  }
+  set SetShovelActive(isHiding: boolean) {
+    this.isHidden = isHiding;
   }
 }
