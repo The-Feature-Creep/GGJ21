@@ -38,11 +38,18 @@ export class GameScene extends Phaser.Scene {
   private shovel: Shovel;
   private timeInBeam: number = 0;
 
+  private footsteps: Phaser.Sound.BaseSound;
+  private blows: Phaser.Sound.BaseSound;
+  private gameOver: Phaser.Sound.BaseSound;
+
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   constructor() {
     super("Game");
   }
   preload() {
+    this.load.audio("footsteps", ["footsteps-ice.wav"]);
+    this.load.audio("game-over", ["gameOver-ice.wav"]);
+    this.load.audio("blows", ["blows-ice.wav"]);
     // this.load.image(GUARD_IMG_KEY, GuardImg);
     this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
@@ -88,6 +95,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.footsteps = this.sound.add("footsteps");
+    this.gameOver = this.sound.add("gameOver");
+    this.blows = this.sound.add("blows");
+
     this.shovel = new Shovel(this, 800, 395);
     this.spotlight = new Spotlight(this, 100, 100);
     this.guards.push(new Guard(this, 100, 300));
@@ -144,6 +155,7 @@ export class GameScene extends Phaser.Scene {
   spotlightCollideWithPlayer() {
     if (this.timeInBeam >= 35) {
       console.log("Gane Ends");
+      this.blows.play();
     } else if (!this.player.isHidden) {
       this.timeInBeam += 1;
     }
@@ -174,10 +186,12 @@ export class GameScene extends Phaser.Scene {
         if (this.cursors.up.isDown) {
           if (this.physics.overlap(this.player, this.rock)) {
             this.unhide(ROCK_IMG_KEY);
+            this.blows.play();
           }
         } else if (this.cursors.down.isDown) {
           if (this.physics.overlap(this.player, this.tree)) {
             this.unhide(TREE_IMG_KEY);
+            this.blows.play();
           }
         } else {
           this.player.setVelocityX(0);
@@ -186,23 +200,29 @@ export class GameScene extends Phaser.Scene {
       } else {
         if (this.cursors.left.isDown) {
           this.player.anims.play(PLAYER_WALK_CYCLE_LEFT, true);
+          this.footsteps.play();
           this.player.setVelocityX(-180);
         } else if (this.cursors.right.isDown) {
           this.player.setVelocityX(180);
           this.player.anims.play(PLAYER_WALK_CYCLE, true);
+          this.footsteps.play();
         } else {
           this.player.setVelocityX(0);
           this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+          this.footsteps.stop();
+          this.blows.play();
         }
         if (this.cursors.up.isDown) {
           if (this.physics.overlap(this.player, this.tree)) {
             this.player.setVelocityX(0);
             this.hide(TREE_IMG_KEY);
+            this.blows.play();
           }
         } else if (this.cursors.down.isDown) {
           if (this.physics.overlap(this.player, this.rock)) {
             this.player.setVelocityX(0);
             this.hide(ROCK_IMG_KEY);
+            this.blows.play();
           }
         }
       }
@@ -211,36 +231,45 @@ export class GameScene extends Phaser.Scene {
         if (this.cursors.up.isDown) {
           if (this.physics.overlap(this.player, this.rock)) {
             this.unhide(ROCK_IMG_KEY);
+            this.blows.play();
           }
         } else if (this.cursors.down.isDown) {
           if (this.physics.overlap(this.player, this.tree)) {
             this.unhide(TREE_IMG_KEY);
+            this.blows.play();
           }
         } else {
           this.player.setVelocityX(0);
           this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
+          this.footsteps.play();
+          this.blows.play();
         }
       } else {
         if (this.cursors.left.isDown) {
           this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE_LEFT, true);
+          this.footsteps.play();
           this.player.setVelocityX(-180);
         } else if (this.cursors.right.isDown) {
           this.player.setVelocityX(180);
           this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
+          this.footsteps.play();
         } else {
           this.player.setVelocityX(0);
           this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
+          this.footsteps.play();
         }
 
         if (this.cursors.up.isDown) {
           if (this.physics.overlap(this.player, this.tree)) {
             this.player.setVelocityX(0);
             this.hide(TREE_IMG_KEY);
+            this.blows.play();
           }
         } else if (this.cursors.down.isDown) {
           if (this.physics.overlap(this.player, this.rock)) {
             this.player.setVelocityX(0);
             this.hide(ROCK_IMG_KEY);
+            this.blows.play();
           }
         }
       }
