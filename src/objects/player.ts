@@ -5,9 +5,9 @@ export const PLAYER_STATIONARY_CYCLE = 'prisoner-stand';
 export const PLAYER_WALK_SHOVEL_CYCLE = 'prisoner-walk-shovel';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  isHidden: boolean = false;
-  hasShovel: boolean = false;
-  shovelActive: boolean = false;
+	isHidden: boolean = false;
+	hasShovel: boolean = false;
+	isShovelActive: boolean = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -69,13 +69,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     return this.shovelActive;
   }
 
-  set SetHiding(isHiding: boolean) {
-    this.isHidden = isHiding;
-  }
-  set SetHasShovel(hasS: boolean) {
-    this.hasShovel = hasS;
-  }
-  set SetShovelActive(isHiding: boolean) {
-    this.isHidden = isHiding;
-  }
+	get getIsHidden() {
+		return this.isHidden;
+	}
+	get getHasShovel() {
+		return this.hasShovel;
+	}
+	get getIsShovelActive() {
+		return this.isShovelActive;
+	}
+
+	set setIsHidden(isHiding: boolean) {
+		this.isHidden = isHiding;
+	}
+	set setHasShovel(hasShovel: boolean) {
+		this.hasShovel = hasShovel;
+	}
+	set setIsShovelActive(isShovelActive: boolean) {
+		this.isShovelActive = isShovelActive;
+	}
 }

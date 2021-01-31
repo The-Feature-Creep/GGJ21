@@ -105,88 +105,101 @@ export class GameScene extends Phaser.Scene {
     // Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
   }
 
-  spotlightCollideWithPlayer() {
-    if (this.timeInBeam >= 35) {
-      console.log('Gane Ends');
-    } else if (!this.player.isHidden) {
-      this.timeInBeam += 1;
-    }
-  }
-  update(time, delta) {
-    // this.controls.update(delta);
-    if (this.player.body.touching.none) {
-      this.timeInBeam = 0;
-    }
-    this.spotlight.update();
-    this.guards.forEach((guard) => {
-      guard.updatePosition();
-    });
-    if (this.cursors.left.isDown) {
-      this.player.setScale(-1, this.player.scaleY);
-      this.player.anims.play(PLAYER_WALK_CYCLE, true);
-      this.player.setVelocityX(-180);
-    } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(180);
-      this.player.setScale(1, this.player.scaleY);
-      this.player.anims.play(PLAYER_WALK_CYCLE, true);
-    } else {
-      this.player.setVelocityX(0);
-      this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
-    }
-    if (this.cursors.up.isDown) {
-      if (this.player.GetHiding) {
-        if (this.physics.overlap(this.player, this.rock)) {
-          this.unhide(ROCK_IMG_KEY);
-        }
-      } else {
-        if (this.physics.overlap(this.player, this.tree)) {
-          this.hide(TREE_IMG_KEY);
-        }
-      }
-    } else if (this.cursors.down.isDown) {
-      if (this.player.GetHiding) {
-        if (this.physics.overlap(this.player, this.tree)) {
-          this.unhide(TREE_IMG_KEY);
-        }
-      } else {
-        if (this.physics.overlap(this.player, this.rock)) {
-          this.hide(ROCK_IMG_KEY);
-        }
-      }
-    }
-  }
-  private hide(object: string) {
-    switch (object) {
-      case 'rock':
-        this.player.setVisible(false);
-        this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
-        this.player.SetHiding = true;
-        return;
-      case 'tree':
-        this.player.setVisible(false);
-        this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
-        this.player.SetHiding = true;
-        return;
+	spotlightCollideWithPlayer() {
+		if (this.timeInBeam >= 35) {
+			console.log("Gane Ends");
+		} else if (!this.player.isHidden) {
+			this.timeInBeam += 1;
+		}
+	}
+	update(time, delta) {
+		// this.controls.update(delta);
+		if (this.player.body.touching.none) {
+			this.timeInBeam = 0;
+		}
+		this.spotlight.update();
+		this.guards.forEach((guard) => {
+			guard.updatePosition();
+			if (
+				guard.canSeePlayer(
+					this.player.x,
+					this.player.y,
+					this.player.getIsHidden
+				)
+			) {
+				console.log("Guard Can see you!");
+			}
+		});
+		if (this.cursors.left.isDown) {
+			this.player.setScale(-1, this.player.scaleY);
+			this.player.anims.play(PLAYER_WALK_CYCLE, true);
+			this.player.setVelocityX(-180);
+		} else if (this.cursors.right.isDown) {
+			this.player.setVelocityX(180);
+			this.player.setScale(1, this.player.scaleY);
+			this.player.anims.play(PLAYER_WALK_CYCLE, true);
+		} else {
+			this.player.setVelocityX(0);
+			this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+		}
+		if (this.cursors.up.isDown) {
+			if (this.player.getIsHidden) {
+				if (this.physics.overlap(this.player, this.rock)) {
+					this.unhide(ROCK_IMG_KEY);
+				}
+			} else {
+				if (this.physics.overlap(this.player, this.tree)) {
+					this.hide(TREE_IMG_KEY);
+				}
+			}
+		} else if (this.cursors.down.isDown) {
+			if (this.player.getIsHidden) {
+				if (this.physics.overlap(this.player, this.tree)) {
+					this.unhide(TREE_IMG_KEY);
+				}
+			} else {
+				if (this.physics.overlap(this.player, this.rock)) {
+					this.hide(ROCK_IMG_KEY);
+				}
+			}
+		}
+	}
+	private hide(object: string) {
+		switch (object) {
+			case "rock":
+				this.player.setVisible(false);
+				this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
+				this.player.setIsHidden = true;
+				return;
+			case "tree":
+				this.player.setVisible(false);
+				this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
+				this.player.setIsHidden = true;
+				return;
 
-      default:
-        break;
-    }
-  }
-  private unhide(object: string) {
-    switch (object) {
-      case 'rock':
-        this.player.setVisible(true);
-        this.rock.anims.play(ROCK_IMG_KEY, true);
-        this.player.SetHiding = false;
-        return;
-      case 'tree':
-        this.player.setVisible(true);
-        this.tree.anims.play(TREE_IMG_KEY, true);
-        this.player.SetHiding = false;
-        return;
+			default:
+				break;
+		}
+	}
+	private unhide(object: string) {
+		switch (object) {
+			case "rock":
+				this.player.setVisible(true);
+				this.rock.anims.play(ROCK_IMG_KEY, true);
+				this.player.setIsHidden = false;
+				return;
+			case "tree":
+				this.player.setVisible(true);
+				this.tree.anims.play(TREE_IMG_KEY, true);
+				this.player.setIsHidden = false;
+				return;
 
-      default:
-        break;
-    }
-  }
+			default:
+				break;
+		}
+	}
+
+	getGround() {
+		return this.ground;
+	}
 }
