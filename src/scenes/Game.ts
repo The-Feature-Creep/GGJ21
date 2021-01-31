@@ -27,6 +27,8 @@ import SpotlightImg from "../assets/spotlight.png";
 import FenceEndImg from "./../assets/fence-end.png";
 import { Shovel, SHOVEL_IMAGE_KEY } from "./../objects/shovel";
 import ShovelImg from "./../assets/sandpile-with-spade.png";
+import WallTileImg from "../assets/fence-repeat.png";
+import { WallTileSprite, WALL_TILE_IMG_KEY } from "../objects/wall-tile";
 
 export class GameScene extends Phaser.Scene {
 	private player: Player;
@@ -38,12 +40,14 @@ export class GameScene extends Phaser.Scene {
 	private spotlight: Spotlight;
 	private shovel: Shovel;
 	private timeInBeam: number = 0;
+	private wallTileSprite: WallTileSprite;
 
 	private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 	constructor() {
 		super("Game");
 	}
 	preload() {
+		this.load.image(WALL_TILE_IMG_KEY, WallTileImg);
 		// this.load.image(GUARD_IMG_KEY, GuardImg);
 		this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
 		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
@@ -99,6 +103,8 @@ export class GameScene extends Phaser.Scene {
 		this.player = new Player(this, 100, 300, PLAYER_IMG_KEY);
 		this.fence = new Fence(this, 900, 350);
 		this.add.image(510, 330, "fence-end").setDepth(-1);
+		// this.physics.add.collider(this.player, this.fence);
+		this.wallTileSprite = new WallTileSprite(this, -253, 385, 600, 150);
 
 		this.guards.forEach((guard) => {
 			this.physics.add.collider(guard, this.ground); // makes guard collide with ground
