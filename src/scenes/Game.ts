@@ -119,6 +119,15 @@ export class GameScene extends Phaser.Scene {
     this.spotlight.update();
     this.guards.forEach((guard) => {
       guard.updatePosition();
+      if (
+        guard.canSeePlayer(
+          this.player.x,
+          this.player.y,
+          this.player.getIsHidden
+        )
+      ) {
+        console.log("Guard Can see you!");
+      }
     });
 
     if (this.player.isHidden) {
