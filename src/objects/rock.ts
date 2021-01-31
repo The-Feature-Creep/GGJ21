@@ -1,9 +1,12 @@
+export const ROCK_IMAGES_KEY = "rock";
 import { Obstacles } from "./obstacles";
 export class Rock extends Obstacles {
   constructor(
-    sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody,
-    type: string
+    scene: Phaser.Scene,
+    xPosition: number,
+    yPosition: number,
+    textureURL: string
   ) {
-    super(sprite, type);
+    super(scene, xPosition, yPosition, textureURL);
   }
 }

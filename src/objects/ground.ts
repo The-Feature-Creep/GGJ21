@@ -1,6 +1,8 @@
-export const TREE_IMAGES_KEY = "tree";
-import { Obstacles } from "./obstacles";
-export class Tree extends Obstacles {
+export const GROUND_IMAGES_KEY = "ground";
+
+import { Terrain } from "./terrain";
+
+export class Ground extends Terrain {
   constructor(
     scene: Phaser.Scene,
     xPosition: number,

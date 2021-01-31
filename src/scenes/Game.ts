@@ -1,7 +1,7 @@
-import { Obstacles } from "./../objects/obstacles";
-import { Tree } from "./../objects/tree";
-import { Rock } from "./../objects/rock";
-import { Player } from "../objects/player";
+import { Ground, GROUND_IMAGES_KEY } from "./../objects/ground";
+import { TREE_IMAGES_KEY, Tree } from "../objects/tree";
+import { ROCK_IMAGES_KEY, Rock } from "../objects/rock";
+import { PLAYER_IMAGES_KEY, Player } from "../objects/player";
 import CharacterImg from "../assets/prisoner.png";
 import PlatformImg from "../assets/ground.png";
 import RockImg from "../assets/rock.png";
@@ -11,23 +11,24 @@ import HideTreeImg from "../assets/tree-hidden.png";
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
-  private playerObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private rock: Rock;
-  private rockObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private tree: Tree;
-  private treeObject: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+  private ground: Ground;
 
-  private ground: Phaser.Types.Physics.Arcade.SpriteWithStaticBody;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private controls: Phaser.Cameras.Controls.SmoothedKeyControl;
 
   constructor() {
     super("Game");
   }
 
   preload() {
-    this.load.image("char", CharacterImg);
-    this.load.image("platform", PlatformImg);
-    this.load.spritesheet("rock", RockImg, {
+    this.load.spritesheet(PLAYER_IMAGES_KEY, CharacterImg, {
+      frameWidth: 100,
+      frameHeight: 119,
+    });
+    this.load.image(GROUND_IMAGES_KEY, PlatformImg);
+    this.load.spritesheet(ROCK_IMAGES_KEY, RockImg, {
       frameWidth: 148,
       frameHeight: 100,
     });
@@ -35,51 +36,40 @@ export class GameScene extends Phaser.Scene {
       frameWidth: 148,
       frameHeight: 100,
     });
-    this.load.spritesheet("tree", TreeImg, {
+    this.load.spritesheet(TREE_IMAGES_KEY, TreeImg, {
       frameWidth: 231,
-      frameHeight: 285,
+      frameHeight: 435,
     });
     this.load.spritesheet("hide-tree", HideTreeImg, {
       frameWidth: 231,
-      frameHeight: 285,
+      frameHeight: 425,
     });
   }
 
   create() {
-    //#region Sprite Creation
-    const rockSprite = this.physics.add
-      .sprite(300, 425, "rock")
-      .setImmovable(true)
-      .setCollideWorldBounds(true);
-    rockSprite.body.setAllowGravity(false);
-    const treeSprite = this.physics.add
-      .sprite(600, 425, "tree")
-      .setImmovable(true)
-      .setCollideWorldBounds(true);
-    treeSprite.body.setAllowGravity(false);
-    const playerSprite = this.physics.add
-      .sprite(100, 600, "char")
-      .setSize(100, 100)
-      .setBounce(0.2)
-      .setCollideWorldBounds(true);
+    this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
+    this.rock = new Rock(this, 300, 425, ROCK_IMAGES_KEY);
+    this.tree = new Tree(this, 600, 315, TREE_IMAGES_KEY);
+    this.player = new Player(this, 100, 300, PLAYER_IMAGES_KEY);
 
-    this.ground = this.physics.add
-      .staticSprite(500, 480, "platform")
-      .refreshBody();
-    //#endregion
-
-    this.rock = new Rock(rockSprite, "Rock");
-    this.tree = new Tree(treeSprite, "Tree");
-    this.player = new Player(playerSprite, false, false, false);
-    this.rockObject = this.rock.GetSprite;
-    this.playerObject = this.player.GetSprite;
-    this.treeObject = this.tree.GetSprite;
-
-    this.physics.add.collider(this.playerObject, this.ground);
-    this.physics.add.collider(this.rockObject, this.ground);
-    this.physics.add.collider(this.treeObject, this.ground);
+    this.physics.add.collider(this.player, this.ground);
+    this.physics.add.collider(this.rock, this.ground);
+    this.physics.add.collider(this.tree, this.ground);
 
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    // const controlConfig = {
+    //   camera: this.cameras.main,
+    //   left: this.cursors.left,
+    //   right: this.cursors.right,
+    //   speed: 0.1,
+    // };
+    // this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(
+    //   controlConfig
+    // );
+    // this.cameras.main.setBounds(0, 0, this.ground.x, 0);
+
+    // Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
 
     //#region Anims
     this.anims.create({
@@ -89,8 +79,8 @@ export class GameScene extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: "rock",
-      frames: [{ key: "rock", frame: 0 }],
+      key: ROCK_IMAGES_KEY,
+      frames: [{ key: ROCK_IMAGES_KEY, frame: 0 }],
       frameRate: 10,
       repeat: -1,
     });
@@ -101,58 +91,97 @@ export class GameScene extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: "tree",
-      frames: [{ key: "tree", frame: 0 }],
+      key: TREE_IMAGES_KEY,
+      frames: [{ key: TREE_IMAGES_KEY, frame: 0 }],
       frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "right-walk",
+      frames: this.anims.generateFrameNumbers(PLAYER_IMAGES_KEY, {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "stand",
+      frames: this.anims.generateFrameNumbers(PLAYER_IMAGES_KEY, {
+        start: 0,
+        end: 0,
+      }),
+      frameRate: 12,
       repeat: -1,
     });
     //#endregion
   }
 
-  update() {
+  update(time, delta) {
+    // this.controls.update(delta);
     if (this.cursors.left.isDown) {
-      this.playerObject.setVelocityX(-180);
+      this.player.setScale(-1, this.player.scaleY);
+      this.player.anims.play("right-walk", true);
+      this.player.setVelocityX(-180);
     } else if (this.cursors.right.isDown) {
-      this.playerObject.setVelocityX(180);
+      this.player.setVelocityX(180);
+      this.player.setScale(1, this.player.scaleY);
+      this.player.anims.play("right-walk", true);
     } else {
-      this.playerObject.setVelocityX(0);
+      this.player.setVelocityX(0);
+      this.player.anims.play("stand", true);
     }
     if (this.cursors.up.isDown) {
-      this.physics.overlap(this.playerObject, this.treeObject)
-        ? this.hideController("Tree")
-        : false;
+      if (this.player.GetHiding) {
+        if (this.physics.overlap(this.player, this.rock)) {
+          this.unhide(ROCK_IMAGES_KEY);
+        }
+      } else {
+        if (this.physics.overlap(this.player, this.tree)) {
+          this.hide(TREE_IMAGES_KEY);
+        }
+      }
     } else if (this.cursors.down.isDown) {
-      this.physics.overlap(this.playerObject, this.rockObject)
-        ? this.hideController("Rock")
-        : false;
+      if (this.player.GetHiding) {
+        if (this.physics.overlap(this.player, this.tree)) {
+          this.unhide(TREE_IMAGES_KEY);
+        }
+      } else {
+        if (this.physics.overlap(this.player, this.rock)) {
+          this.hide(ROCK_IMAGES_KEY);
+        }
+      }
     }
   }
-  private hideController(object: string) {
+  private hide(object: string) {
     switch (object) {
-      case "Rock":
-        if (!this.player.GetHiding) {
-          this.playerObject.setVisible(false);
-          this.rockObject.anims.play("hide-rock", true);
-          this.player.SetHiding = true;
-          return;
-        } else {
-          this.playerObject.setVisible(true);
-          this.rockObject.anims.play("rock", true);
-          this.player.SetHiding = false;
-          return;
-        }
-      case "Tree":
-        if (!this.player.GetHiding) {
-          this.playerObject.setVisible(false);
-          this.treeObject.anims.play("hide-tree", true);
-          this.player.SetHiding = true;
-          break;
-        } else {
-          this.playerObject.setVisible(true);
-          this.treeObject.anims.play("tree", true);
-          this.player.SetHiding = false;
-          break;
-        }
+      case "rock":
+        this.player.setVisible(false);
+        this.rock.anims.play("hide-rock", true);
+        this.player.SetHiding = true;
+        return;
+      case "tree":
+        this.player.setVisible(false);
+        this.tree.anims.play("hide-tree", true);
+        this.player.SetHiding = true;
+        return;
+
+      default:
+        break;
+    }
+  }
+  private unhide(object: string) {
+    switch (object) {
+      case "rock":
+        this.player.setVisible(true);
+        this.rock.anims.play(ROCK_IMAGES_KEY, true);
+        this.player.SetHiding = false;
+        return;
+      case "tree":
+        this.player.setVisible(true);
+        this.tree.anims.play(TREE_IMAGES_KEY, true);
+        this.player.SetHiding = false;
+        return;
 
       default:
         break;
