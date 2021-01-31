@@ -4,13 +4,15 @@ import { SPOTLIGHT_IMG_KEY, Spotlight } from "./../objects/spotlight";
 import { Ground, GROUND_IMAGES_KEY } from "./../objects/ground";
 import { TREE_IMG_KEY, TREE_HIDE_IMG_KEY, Tree } from "./../objects/tree";
 import { ROCK_IMG_KEY, ROCK_HIDE_IMG_KEY, Rock } from "./../objects/rock";
+import { Shovel, SHOVEL_IMAGE_KEY } from "./../objects/shovel";
 import {
 	PLAYER_IMG_KEY,
 	PLAYER_WALK_CYCLE,
+	PLAYER_WALK_SHOVEL_CYCLE,
 	PLAYER_STATIONARY_CYCLE,
+	PLAYER_STATIONARY_SHOVEL_CYCLE,
 	Player,
 } from "./../objects/player";
-import { Shovel } from "./../objects/shovel";
 
 import CharacterImg from "./../assets/prisoner.png";
 import PlatformImg from "./../assets/ground.png";
@@ -21,6 +23,7 @@ import HideTreeImg from "../assets/tree-hidden.png";
 import GuardImg from "./../assets/guard1.png";
 import SpotlightImg from "../assets/spotlight.png";
 import FenceEndImg from "./../assets/fence-end.png";
+import ShovelImg from "./../assets/sandpile-with-spade.png";
 
 export class GameScene extends Phaser.Scene {
 	private player: Player;
@@ -39,9 +42,9 @@ export class GameScene extends Phaser.Scene {
 	}
 	preload() {
 		// this.load.image(GUARD_IMG_KEY, GuardImg);
+		this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
 		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
 		this.load.image("char", CharacterImg);
-		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
 		this.load.image(GROUND_IMAGES_KEY, PlatformImg);
 		this.load.image("fence-end", FenceEndImg);
 		this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
@@ -71,6 +74,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.shovel = new Shovel(this, 800, 395);
 		this.spotlight = new Spotlight(this, 100, 100);
 		this.guards.push(new Guard(this, 100, 300));
 		this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
@@ -87,6 +91,10 @@ export class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.player, this.ground);
 		this.physics.add.collider(this.rock, this.ground);
 		this.physics.add.collider(this.tree, this.ground);
+
+		this.physics.add.overlap(this.shovel.sprite, this.player, (onCollide) => {
+			this.shovelCollideWithPlayer();
+		});
 
 		this.physics.add.overlap(
 			this.spotlight.sprite,
@@ -112,6 +120,13 @@ export class GameScene extends Phaser.Scene {
 		// Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
 	}
 
+	shovelCollideWithPlayer() {
+		//character picks up shovel
+		//shovel disappears
+		this.player.hasShovel = true;
+		this.shovel.sprite.disableBody(undefined, true);
+	}
+
 	spotlightCollideWithPlayer() {
 		if (this.timeInBeam >= 35) {
 			console.log("Gane Ends");
@@ -123,6 +138,8 @@ export class GameScene extends Phaser.Scene {
 		// this.controls.update(delta);
 		if (this.player.body.touching.none) {
 			this.timeInBeam = 0;
+		} else {
+			this.spotlight.update();
 		}
 		this.spotlight.update();
 		this.guards.forEach((guard) => {
@@ -137,17 +154,32 @@ export class GameScene extends Phaser.Scene {
 				console.log("Guard Can see you!");
 			}
 		});
-		if (this.cursors.left.isDown) {
-			this.player.setScale(-1, this.player.scaleY);
-			this.player.anims.play(PLAYER_WALK_CYCLE, true);
-			this.player.setVelocityX(-180);
-		} else if (this.cursors.right.isDown) {
-			this.player.setVelocityX(180);
-			this.player.setScale(1, this.player.scaleY);
-			this.player.anims.play(PLAYER_WALK_CYCLE, true);
+		if (!this.player.hasShovel) {
+			if (this.cursors.left.isDown) {
+				this.player.setScale(-1, this.player.scaleY);
+				this.player.anims.play(PLAYER_WALK_CYCLE, true);
+				this.player.setVelocityX(-180);
+			} else if (this.cursors.right.isDown) {
+				this.player.setVelocityX(180);
+				this.player.setScale(1, this.player.scaleY);
+				this.player.anims.play(PLAYER_WALK_CYCLE, true);
+			} else {
+				this.player.setVelocityX(0);
+				this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+			}
 		} else {
-			this.player.setVelocityX(0);
-			this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+			if (this.cursors.left.isDown) {
+				this.player.setScale(-1, this.player.scaleY);
+				this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
+				this.player.setVelocityX(-180);
+			} else if (this.cursors.right.isDown) {
+				this.player.setVelocityX(180);
+				this.player.setScale(1, this.player.scaleY);
+				this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
+			} else {
+				this.player.setVelocityX(0);
+				this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
+			}
 		}
 		if (this.cursors.up.isDown) {
 			if (this.player.getIsHidden) {
@@ -204,9 +236,5 @@ export class GameScene extends Phaser.Scene {
 			default:
 				break;
 		}
-	}
-
-	getGround() {
-		return this.ground;
 	}
 }
