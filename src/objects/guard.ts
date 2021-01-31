@@ -1,6 +1,9 @@
 export const GUARD_IMG_KEY = "guard";
+export const GUARD_2_IMG_KEY = "guard-2";
 export const GUARD_WALK_CYCLE = "guard-walk-cycle";
+export const GUARD_2_WALK_CYCLE = "guard-walk-cycle-2";
 export const GUARD_STATIONARY_CYCLE = "guard-stationary-cycle";
+export const GUARD_2_STATIONARY_CYCLE = "guard-stationary-cycle-2";
 
 const viewDistance = 100;
 
@@ -12,9 +15,23 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 	private isStationary: boolean;
 
 	private velocity: number;
+	private key: string;
+
+	private animMap:Map<string, string>;
 
 	constructor(scene: Phaser.Scene, x: number, y: number) {
-		super(scene, x, y, GUARD_IMG_KEY);
+		var key = Math.random() > .5 ? GUARD_IMG_KEY : GUARD_2_IMG_KEY;
+		console.log(key);
+		super(scene, x, y, key);
+
+		this.key = key;
+
+		this.animMap = new Map<string, string>();
+		this.animMap.set("guard-walk", GUARD_WALK_CYCLE);
+		this.animMap.set("guard-stationary", GUARD_STATIONARY_CYCLE);
+		this.animMap.set("guard-2-walk", GUARD_2_WALK_CYCLE);
+		this.animMap.set("guard-2-stationary", GUARD_2_STATIONARY_CYCLE);
+
 		this.isStationary = false;
 		this.velocity = 0.8;
 		scene.add.existing(this);
@@ -36,6 +53,24 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 		scene.anims.create({
 			key: GUARD_STATIONARY_CYCLE,
 			frames: scene.anims.generateFrameNumbers(GUARD_IMG_KEY, {
+				start: 0,
+				end: 0,
+			}),
+			frameRate: 24,
+			repeat: -1,
+		});
+		scene.anims.create({
+			key: GUARD_2_WALK_CYCLE,
+			frames: scene.anims.generateFrameNumbers(GUARD_2_IMG_KEY, {
+				start: 1,
+				end: 20,
+			}),
+			frameRate: 24,
+			repeat: -1,
+		});
+		scene.anims.create({
+			key: GUARD_2_STATIONARY_CYCLE,
+			frames: scene.anims.generateFrameNumbers(GUARD_2_IMG_KEY, {
 				start: 0,
 				end: 0,
 			}),
@@ -66,10 +101,10 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 					this.setStationary();
 				}
 			}
-			this.anims.play(GUARD_WALK_CYCLE, true);
+			this.anims.play(this.animMap.get(this.key + "-walk"), true);
 		} else {
 			// const SpriteSheetFrames = this.scene.anims.get(GUARD_STATIONARY_CYCLE);
-			this.anims.play(GUARD_STATIONARY_CYCLE, true);
+			this.anims.play(this.animMap.get(this.key + "-stationary"), true);
 			// console.log(SpriteSheetFrames);
 		}
 	}
