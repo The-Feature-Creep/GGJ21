@@ -1,5 +1,5 @@
 import { Fence } from "./../objects/fence";
-import { GUARD_IMG_KEY, Guard } from "./../objects/guard";
+import { GUARD_IMG_KEY, GUARD_2_IMG_KEY, Guard } from "./../objects/guard";
 import { SPOTLIGHT_IMG_KEY, Spotlight } from "./../objects/spotlight";
 import { Ground, GROUND_IMAGES_KEY } from "./../objects/ground";
 import { TREE_IMG_KEY, TREE_HIDE_IMG_KEY, Tree } from "./../objects/tree";
@@ -14,6 +14,7 @@ import {
   PLAYER_STATIONARY_SHOVEL_CYCLE,
   Player,
 } from "./../objects/player";
+import { LOSE_SCENE_KEY } from "./Lose";
 import CharacterImg from "./../assets/prisoner.png";
 import CharacterImgLeft from "./../assets/prisoner-left.png";
 import PlatformImg from "./../assets/ground.png";
@@ -22,10 +23,13 @@ import HideRock from "./../assets/rock-hidden.png";
 import TreeImg from "./../assets/tree.png";
 import HideTreeImg from "../assets/tree-hidden.png";
 import GuardImg from "./../assets/guard1.png";
+import GuardImg2 from "./../assets/guard2.png";
 import SpotlightImg from "../assets/spotlight.png";
 import FenceEndImg from "./../assets/fence-end.png";
 import { Shovel, SHOVEL_IMAGE_KEY } from "./../objects/shovel";
 import ShovelImg from "./../assets/sandpile-with-spade.png";
+import WallTileImg from "../assets/fence-repeat.png";
+import { WallTileSprite, WALL_TILE_IMG_KEY } from "../objects/wall-tile";
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
@@ -37,6 +41,7 @@ export class GameScene extends Phaser.Scene {
   private spotlight: Spotlight;
   private shovel: Shovel;
   private timeInBeam: number = 0;
+  private wallTileSprite: WallTileSprite;
 
   private footsteps: Phaser.Sound.BaseSound;
   private blows: Phaser.Sound.BaseSound;
@@ -47,6 +52,8 @@ export class GameScene extends Phaser.Scene {
     super("Game");
   }
   preload() {
+    this.load.image(WALL_TILE_IMG_KEY, WallTileImg);
+
     this.load.audio("footstepsAudio", "src/assets/sounds/footsteps-stones.mp3");
     this.load.audio("gameOverAudio", "src/assets/sounds/gameOver.wav");
     this.load.audio("blowsAudio", "src/assets/sounds/blows.mp3");
@@ -57,7 +64,11 @@ export class GameScene extends Phaser.Scene {
     this.load.image(GROUND_IMAGES_KEY, PlatformImg);
     this.load.image("fence-end", FenceEndImg);
     this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
-      frameWidth: 98,
+      frameWidth: 98.5,
+      frameHeight: 144,
+    });
+    this.load.spritesheet(GUARD_2_IMG_KEY, GuardImg2, {
+      frameWidth: 98.5,
       frameHeight: 144,
     });
     this.load.spritesheet(PLAYER_IMG_KEY, CharacterImg, {
@@ -95,6 +106,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.guards.length = 0;
     this.footsteps = this.sound.add("footstepsAudio");
     this.gameOver = this.sound.add("gameOverAudio");
     this.blows = this.sound.add("blowsAudio");
@@ -114,13 +126,15 @@ export class GameScene extends Phaser.Scene {
 
     this.shovel = new Shovel(this, 800, 395);
     this.spotlight = new Spotlight(this, 100, 100);
-    this.guards.push(new Guard(this, 100, 300));
+    this.guards.push(new Guard(this, 125, 300));
     this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
     this.rock = new Rock(this, 300, 425, ROCK_IMG_KEY);
     this.tree = new Tree(this, 600, 315, TREE_IMG_KEY);
-    this.player = new Player(this, 125, 300, PLAYER_IMG_KEY);
+    this.player = new Player(this, 100, 300, PLAYER_IMG_KEY);
     this.fence = new Fence(this, 900, 350);
     this.add.image(510, 330, "fence-end").setDepth(-1);
+    // this.physics.add.collider(this.player, this.fence);
+    this.wallTileSprite = new WallTileSprite(this, -253, 385, 600, 150);
 
     this.guards.forEach((guard) => {
       this.physics.add.collider(guard, this.ground); // makes guard collide with ground
@@ -167,11 +181,18 @@ export class GameScene extends Phaser.Scene {
 
   spotlightCollideWithPlayer() {
     if (this.timeInBeam >= 35) {
-      console.log("Gane Ends");
-      this.gameOver.play();
+      this.callLoseScene();
     } else if (!this.player.isHidden) {
       this.timeInBeam += 1;
     }
+  }
+
+  callLoseScene() {
+    this.scene.launch(LOSE_SCENE_KEY, {
+      sceneContext: this,
+    });
+    this.gameOver.play();
+    this.scene.pause();
   }
   update(time, delta) {
     // this.controls.update(delta);
@@ -190,7 +211,7 @@ export class GameScene extends Phaser.Scene {
           this.player.getIsHidden
         )
       ) {
-        console.log("Guard Can see you!");
+        this.callLoseScene();
       }
     });
 
