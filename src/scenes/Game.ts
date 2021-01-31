@@ -120,34 +120,36 @@ export class GameScene extends Phaser.Scene {
     this.guards.forEach((guard) => {
       guard.updatePosition();
     });
-    if (this.cursors.left.isDown) {
-      this.player.setScale(-1, this.player.scaleY);
-      this.player.anims.play(PLAYER_WALK_CYCLE, true);
-      this.player.setVelocityX(-180);
-    } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(180);
-      this.player.setScale(1, this.player.scaleY);
-      this.player.anims.play(PLAYER_WALK_CYCLE, true);
-    } else {
-      this.player.setVelocityX(0);
-      this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
-    }
-    if (this.cursors.up.isDown) {
-      if (this.player.GetHiding) {
+
+    if (this.player.isHidden) {
+      if (this.cursors.up.isDown) {
         if (this.physics.overlap(this.player, this.rock)) {
           this.unhide(ROCK_IMG_KEY);
         }
-      } else {
-        if (this.physics.overlap(this.player, this.tree)) {
-          this.hide(TREE_IMG_KEY);
-        }
-      }
-    } else if (this.cursors.down.isDown) {
-      if (this.player.GetHiding) {
+      } else if (this.cursors.down.isDown) {
         if (this.physics.overlap(this.player, this.tree)) {
           this.unhide(TREE_IMG_KEY);
         }
+      }
+    } else {
+      if (this.cursors.left.isDown) {
+        this.player.setScale(-1, this.player.scaleY);
+        this.player.anims.play(PLAYER_WALK_CYCLE, true);
+        this.player.setVelocityX(-180);
+      } else if (this.cursors.right.isDown) {
+        this.player.setVelocityX(180);
+        this.player.setScale(1, this.player.scaleY);
+        this.player.anims.play(PLAYER_WALK_CYCLE, true);
       } else {
+        this.player.setVelocityX(0);
+        this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+      }
+
+      if (this.cursors.up.isDown) {
+        if (this.physics.overlap(this.player, this.tree)) {
+          this.hide(TREE_IMG_KEY);
+        }
+      } else if (this.cursors.down.isDown) {
         if (this.physics.overlap(this.player, this.rock)) {
           this.hide(ROCK_IMG_KEY);
         }
@@ -157,12 +159,12 @@ export class GameScene extends Phaser.Scene {
   private hide(object: string) {
     switch (object) {
       case "rock":
-        this.player.disableBody(true);
+        this.player.setVisible(false);
         this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
         this.player.SetHiding = true;
         return;
       case "tree":
-        this.player.disableBody(true);
+        this.player.setVisible(false);
         this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
         this.player.SetHiding = true;
         return;
@@ -174,12 +176,12 @@ export class GameScene extends Phaser.Scene {
   private unhide(object: string) {
     switch (object) {
       case "rock":
-        this.player.enableBody(false, this.player.x, this.player.y, true, true);
+        this.player.setVisible(true);
         this.rock.anims.play(ROCK_IMG_KEY, true);
         this.player.SetHiding = false;
         return;
       case "tree":
-        this.player.enableBody(false, this.player.x, this.player.y, true, true);
+        this.player.setVisible(true);
         this.tree.anims.play(TREE_IMG_KEY, true);
         this.player.SetHiding = false;
         return;
