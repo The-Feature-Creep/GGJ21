@@ -1,9 +1,11 @@
 // import { PLAYER_WALK_CYCLE } from './player';
+export const PLAYER_DIG_TO_FREEDOM_KEY = 'prisoner-digging';
 export const PLAYER_IMG_KEY = 'prisoner';
 export const PLAYER_WALK_CYCLE = 'prisoner-walk';
 export const PLAYER_STATIONARY_CYCLE = 'prisoner-stand';
 export const PLAYER_WALK_SHOVEL_CYCLE = 'prisoner-walk-shovel';
 export const PLAYER_STATIONARY_SHOVEL_CYCLE = 'prisoner-stand-shovel';
+export const PLAYER_DIG_TO_FREEDOM_ANIMATION = 'dig-to-freedom-animaton';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   isHidden: boolean = false;
@@ -54,6 +56,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.anims.create({
       key: PLAYER_STATIONARY_SHOVEL_CYCLE,
       frames: scene.anims.generateFrameNumbers(PLAYER_IMG_KEY, {
+        start: 8,
+        end: 8,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: PLAYER_DIG_TO_FREEDOM_ANIMATION,
+      frames: scene.anims.generateFrameNumbers(PLAYER_DIG_TO_FREEDOM_KEY, {
         start: 8,
         end: 8,
       }),

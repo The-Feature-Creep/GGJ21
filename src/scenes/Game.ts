@@ -4,6 +4,8 @@ import { Ground, GROUND_IMAGES_KEY } from './../objects/ground';
 import { TREE_IMG_KEY, TREE_HIDE_IMG_KEY, Tree } from './../objects/tree';
 import { ROCK_IMG_KEY, ROCK_HIDE_IMG_KEY, Rock } from './../objects/rock';
 import {
+  PLAYER_DIG_TO_FREEDOM_KEY,
+  PLAYER_DIG_TO_FREEDOM_ANIMATION,
   PLAYER_IMG_KEY,
   PLAYER_WALK_CYCLE,
   PLAYER_WALK_SHOVEL_CYCLE,
@@ -11,6 +13,8 @@ import {
   PLAYER_STATIONARY_SHOVEL_CYCLE,
   Player,
 } from './../objects/player';
+
+import DiggingImg from './../assets/digging.png';
 import CharacterImg from './../assets/prisoner.png';
 import PlatformImg from './../assets/ground.png';
 import RockImg from './../assets/rock.png';
@@ -37,6 +41,7 @@ export class GameScene extends Phaser.Scene {
     super('Game');
   }
   preload() {
+    this.load.image(PLAYER_DIG_TO_FREEDOM_KEY, DiggingImg);
     // this.load.image(GUARD_IMG_KEY, GuardImg);
     this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
