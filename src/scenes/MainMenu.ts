@@ -6,6 +6,10 @@ import CreditsDefault from "../assets/ui/buttons/credits/credits-default.svg";
 import CreditsHover from "../assets/ui/buttons/credits/credits-hover.svg";
 import CreditsClick from "../assets/ui/buttons/credits/credits-click.svg";
 
+import WallTitleImage from "../assets/title.png";
+
+import { config } from "../";
+
 export class MainMenuScene extends Phaser.Scene {
 	play: Phaser.GameObjects.Sprite;
 	credits: Phaser.GameObjects.Sprite;
@@ -21,11 +25,14 @@ export class MainMenuScene extends Phaser.Scene {
 		this.load.image("credits-button-default", CreditsDefault);
 		this.load.image("credits-button-hover", CreditsHover);
 		this.load.image("credits-button-click", CreditsClick);
+
+		this.load.image("wall-title-image", WallTitleImage);
 	}
 
 	create() {
+		const image = this.add.image(config.width / 2, config.height / 2, "wall-title-image");
 		this.play = this.add
-			.sprite(150, 400, "play-button-default")
+			.sprite(config.width / 2, 400, "play-button-default")
 			.setInteractive()
 			.on("pointerdown", () => {
 				this.play.setTexture("play-button-click");
@@ -42,7 +49,7 @@ export class MainMenuScene extends Phaser.Scene {
 			});
 
 		this.credits = this.add
-			.sprite(150, 450, "credits-button-default")
+			.sprite(config.width / 2, 450, "credits-button-default")
 			.setInteractive()
 			.on("pointerdown", () => {
 				this.credits.setTexture("credits-button-click");

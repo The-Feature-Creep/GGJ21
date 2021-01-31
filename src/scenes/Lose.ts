@@ -1,6 +1,7 @@
 import BackDefault from "../assets/ui/buttons/back/back-default.svg";
 import BackHover from "../assets/ui/buttons/back/back-hover.svg";
 import BackClick from "../assets/ui/buttons/back/back-click.svg";
+import WallElement from "../assets/wall-element.png";
 export const LOSE_SCENE_KEY = "Lose";
 import { config } from "../";
 import { GameScene } from "./Game";
@@ -18,6 +19,7 @@ export class LoseScene extends Phaser.Scene {
 	}
 
 	preload() {
+		this.load.image("wall-element", WallElement);
 		this.load.image("back-button-default", BackDefault);
 		this.load.image("back-button-hover", BackHover);
 		this.load.image("back-button-click", BackClick);
@@ -32,21 +34,25 @@ export class LoseScene extends Phaser.Scene {
 			0,
 			0.5
 		);
+		const rectangleVector = rectangle.getCenter();
+		this.add.image(rectangleVector.x, rectangleVector.y - 20, "wall-element");
 
 		this.add.text(
-			rectangle.getCenter().x - 200,
-			rectangle.getCenter().y - 200,
+			rectangleVector.x - 200,
+			rectangleVector.y - 65,
 			`
-		Congratulations!
-		You're Garbage.
-		Try again, noob.`,
+		You were found!
+		Try again.`,
 			{
 				fontSize: "40px",
+				color: "black",
+				stroke: "black",
+				strokeThickness: 2,
 			}
 		);
 
 		this.back = this.add
-			.sprite(500, 450, "back-button-default")
+			.sprite(500, 410, "back-button-default")
 			.setInteractive()
 			.on("pointerdown", () => {
 				this.back.setTexture("back-button-click");

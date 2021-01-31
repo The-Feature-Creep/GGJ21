@@ -74,13 +74,14 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.guards.length = 0;
 		this.shovel = new Shovel(this, 800, 395);
 		this.spotlight = new Spotlight(this, 100, 100);
-		this.guards.push(new Guard(this, 100, 300));
+		this.guards.push(new Guard(this, 125, 300));
 		this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
 		this.rock = new Rock(this, 300, 425, ROCK_IMG_KEY);
 		this.tree = new Tree(this, 600, 315, TREE_IMG_KEY);
-		this.player = new Player(this, 125, 300, PLAYER_IMG_KEY);
+		this.player = new Player(this, 100, 300, PLAYER_IMG_KEY);
 		this.fence = new Fence(this, 900, 350);
 		this.add.image(510, 330, "fence-end").setDepth(-1);
 
