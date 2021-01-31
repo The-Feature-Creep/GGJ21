@@ -23,7 +23,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   ) {
     super(scene, xPosition, yPosition, textureURL);
     scene.add.existing(this);
-
     this.animations(scene);
     this.physics(scene.physics);
   }
