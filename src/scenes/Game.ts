@@ -18,6 +18,7 @@ import HideTreeImg from "../assets/tree-hidden.png";
 import GuardImg from "./../assets/guard1.png";
 import SpotlightImg from "../assets/spotlight.png";
 import { Shovel } from "./../objects/shovel";
+import { LOSE_SCENE_KEY } from "./Lose";
 
 export class GameScene extends Phaser.Scene {
 	private player: Player;
@@ -66,6 +67,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.guards.length = 0;
 		this.spotlight = new Spotlight(this, 100, 100);
 		this.guards.push(new Guard(this, 100, 300));
 		this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
@@ -80,13 +82,9 @@ export class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.rock, this.ground);
 		this.physics.add.collider(this.tree, this.ground);
 
-		this.physics.add.overlap(
-			this.spotlight.sprite,
-			this.player,
-			(onCollide) => {
-				this.spotlightCollideWithPlayer();
-			}
-		);
+		this.physics.add.overlap(this.spotlight.sprite, this.player, (onCollide) => {
+			this.spotlightCollideWithPlayer();
+		});
 
 		this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -106,11 +104,20 @@ export class GameScene extends Phaser.Scene {
 
 	spotlightCollideWithPlayer() {
 		if (this.timeInBeam >= 35) {
+			this.callLoseScene();
 			console.log("Gane Ends");
 		} else if (!this.player.isHidden) {
 			this.timeInBeam += 1;
 		}
 	}
+
+	callLoseScene() {
+		const loseScene = this.scene.launch(LOSE_SCENE_KEY, {
+			sceneContext: this,
+		});
+		this.scene.pause();
+	}
+
 	update(time, delta) {
 		// this.controls.update(delta);
 		if (this.player.body.touching.none) {
@@ -119,14 +126,8 @@ export class GameScene extends Phaser.Scene {
 		this.spotlight.update();
 		this.guards.forEach((guard) => {
 			guard.updatePosition();
-			if (
-				guard.canSeePlayer(
-					this.player.x,
-					this.player.y,
-					this.player.getIsHidden
-				)
-			) {
-				console.log("Guard Can see you!");
+			if (guard.canSeePlayer(this.player.x, this.player.y, this.player.getIsHidden)) {
+				this.callLoseScene();
 			}
 		});
 		if (this.cursors.left.isDown) {

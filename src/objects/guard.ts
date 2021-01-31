@@ -74,11 +74,7 @@ export class Guard extends Phaser.Physics.Arcade.Sprite {
 		}
 	}
 
-	canSeePlayer(
-		playerX: number,
-		playerY: number,
-		isPlayerHidden: boolean
-	): boolean {
+	canSeePlayer(playerX: number, playerY: number, isPlayerHidden: boolean): boolean {
 		if (!isPlayerHidden) {
 			let maxFOV;
 			if (this.fPosition > this.iPosition) {
