@@ -15,6 +15,7 @@ export const config = {
       debug: false,
     },
   },
+  backgroundColor: "#633CA6",
   scene: [MainMenuScene, CreditScene, GameScene],
 };
 
