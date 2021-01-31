@@ -166,12 +166,12 @@ export class GameScene extends Phaser.Scene {
       case "rock":
         this.player.setVisible(false);
         this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
-        this.player.SetHiding = true;
+        this.player.setIsHidden = true;
         return;
       case "tree":
         this.player.setVisible(false);
         this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
-        this.player.SetHiding = true;
+        this.player.setIsHidden = true;
         return;
 
       default:
@@ -183,12 +183,12 @@ export class GameScene extends Phaser.Scene {
       case "rock":
         this.player.setVisible(true);
         this.rock.anims.play(ROCK_IMG_KEY, true);
-        this.player.SetHiding = false;
+        this.player.setIsHidden = false;
         return;
       case "tree":
         this.player.setVisible(true);
         this.tree.anims.play(TREE_IMG_KEY, true);
-        this.player.SetHiding = false;
+        this.player.setIsHidden = false;
         return;
 
       default:
