@@ -1,7 +1,7 @@
 import { config } from '../';
 export const SPOTLIGHT_IMG_KEY = 'spotlight';
-const MAX_VELOCITY = 5;
-const ACCELERATION_MODIFER = 0.1;
+const MAX_VELOCITY = 150;
+const ACCELERATION_MODIFER = 2;
 const MAX_WIDTH_MODIFIER = 0;
 const MAX_HEIGHT_MODIFIER = 0;
 const SKY_HEIGHT_MODIFIER = 100;
@@ -17,13 +17,6 @@ export class Spotlight {
   private startingX: number;
   private startingY: number;
   private point: Phaser.Math.Vector2;
-  private velocity: {
-    x: number;
-    y: number;
-  } = {
-    x: 0,
-    y: 0,
-  };
 
   constructor(scene: Phaser.Scene, startingX: number, startingY: number) {
     this.scene = scene;
@@ -38,6 +31,7 @@ export class Spotlight {
       .sprite(this.startingX, this.startingY, SPOTLIGHT_IMG_KEY)
       .setCollideWorldBounds(true)
       .setDepth(2000);
+    this.sprite.body.bounce.set(0.8, 0.8);
     this.sprite.body.setAllowGravity(false);
 
     this.sprite.scale = 0.5;
@@ -116,67 +110,20 @@ export class Spotlight {
 
     const dist = Phaser.Math.Distance.BetweenPoints(this.point, imageVector);
 
-    this.velocity.x +=
-      ((this.point.x - this.sprite.x) / dist) * ACCELERATION_MODIFER;
-    this.velocity.y +=
-      ((this.point.y - this.sprite.y) / dist) * ACCELERATION_MODIFER;
+    this.sprite.setMaxVelocity(MAX_VELOCITY);
 
-    this.velocity.x =
-      this.velocity.x > MAX_VELOCITY
-        ? MAX_VELOCITY
-        : this.velocity.x < MAX_VELOCITY * -1
-        ? MAX_VELOCITY * -1
-        : this.velocity.x;
-    this.velocity.y =
-      this.velocity.y > MAX_VELOCITY
-        ? MAX_VELOCITY
-        : this.velocity.y < MAX_VELOCITY * -1
-        ? MAX_VELOCITY * -1
-        : this.velocity.y;
+    this.sprite.setVelocityX(
+      this.sprite.body.velocity.x +
+        ((this.point.x - this.sprite.x) / dist) * ACCELERATION_MODIFER
+    );
 
-    this.sprite.x += this.velocity.x;
-    this.sprite.y += this.velocity.y;
+    this.sprite.setVelocityY(
+      this.sprite.body.velocity.y +
+        ((this.point.y - this.sprite.y) / dist) * ACCELERATION_MODIFER
+    );
 
-    let boundaryHit: boundaryHit;
-    if (this.sprite.x >= config.width - MAX_WIDTH_MODIFIER && this.velocity.x) {
-      this.velocity.x = 0;
-      this.sprite.x = config.width - MAX_WIDTH_MODIFIER;
-      boundaryHit = {
-        dimension: 'x',
-        boundary: 'max',
-      };
-    } else if (this.sprite.x <= MAX_WIDTH_MODIFIER && this.velocity.x) {
-      this.velocity.x = 0;
-      this.sprite.x = MAX_WIDTH_MODIFIER;
-      boundaryHit = {
-        dimension: 'x',
-        boundary: 'min',
-      };
-    }
-
-    if (
-      this.sprite.y >= config.height - MAX_HEIGHT_MODIFIER &&
-      this.velocity.y
-    ) {
-      this.velocity.y = 0;
-      this.sprite.y = config.height - MAX_HEIGHT_MODIFIER;
-      boundaryHit = {
-        dimension: 'y',
-        boundary: 'max',
-      };
-    } else if (
-      this.sprite.y <= MAX_HEIGHT_MODIFIER + SKY_HEIGHT_MODIFIER &&
-      this.velocity.y
-    ) {
-      this.velocity.y = 0;
-      this.sprite.y = MAX_HEIGHT_MODIFIER + SKY_HEIGHT_MODIFIER;
-      boundaryHit = {
-        dimension: 'y',
-        boundary: 'min',
-      };
-    }
-    if (dist < 100 || boundaryHit) {
-      this.movePoint(boundaryHit);
+    if (dist < 200) {
+      this.movePoint();
     }
   }
 }
