@@ -65,8 +65,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.anims.create({
       key: PLAYER_DIG_TO_FREEDOM_ANIMATION,
       frames: scene.anims.generateFrameNumbers(PLAYER_DIG_TO_FREEDOM_KEY, {
-        start: 8,
-        end: 8,
+        start: 0,
+        end: 20,
       }),
       frameRate: 12,
       repeat: -1,
