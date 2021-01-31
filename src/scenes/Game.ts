@@ -25,6 +25,9 @@ export class GameScene extends Phaser.Scene {
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private controls: Phaser.Cameras.Controls.SmoothedKeyControl;
+  constructor() {
+    super("Game");
+  }
   preload() {
     this.load.image(GUARD_IMG_KEY, GuardImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
