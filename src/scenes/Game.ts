@@ -47,9 +47,9 @@ export class GameScene extends Phaser.Scene {
     super("Game");
   }
   preload() {
-    this.load.audio("footsteps", ["footsteps-ice.wav"]);
-    this.load.audio("game-over", ["gameOver-ice.wav"]);
-    this.load.audio("blows", ["blows-ice.wav"]);
+    this.load.audio("footstepsAudio", "src/assets/sounds/footsteps-stones.mp3");
+    this.load.audio("gameOverAudio", "src/assets/sounds/gameOver.wav");
+    this.load.audio("blowsAudio", "src/assets/sounds/blows.mp3");
     // this.load.image(GUARD_IMG_KEY, GuardImg);
     this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
@@ -95,9 +95,22 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
-    this.footsteps = this.sound.add("footsteps");
-    this.gameOver = this.sound.add("gameOver");
-    this.blows = this.sound.add("blows");
+    this.footsteps = this.sound.add("footstepsAudio");
+    this.gameOver = this.sound.add("gameOverAudio");
+    this.blows = this.sound.add("blowsAudio");
+
+    this.input.keyboard.on("keydown-LEFT", () => {
+      this.footsteps.play();
+    });
+    this.input.keyboard.on("keydown-RIGHT", () => {
+      this.footsteps.play();
+    });
+    this.input.keyboard.on("keyup-RIGHT", () => {
+      this.footsteps.pause();
+    });
+    this.input.keyboard.on("keyup-LEFT", () => {
+      this.footsteps.pause();
+    });
 
     this.shovel = new Shovel(this, 800, 395);
     this.spotlight = new Spotlight(this, 100, 100);
@@ -155,7 +168,7 @@ export class GameScene extends Phaser.Scene {
   spotlightCollideWithPlayer() {
     if (this.timeInBeam >= 35) {
       console.log("Gane Ends");
-      this.blows.play();
+      this.gameOver.play();
     } else if (!this.player.isHidden) {
       this.timeInBeam += 1;
     }
@@ -200,17 +213,13 @@ export class GameScene extends Phaser.Scene {
       } else {
         if (this.cursors.left.isDown) {
           this.player.anims.play(PLAYER_WALK_CYCLE_LEFT, true);
-          this.footsteps.play();
           this.player.setVelocityX(-180);
         } else if (this.cursors.right.isDown) {
           this.player.setVelocityX(180);
           this.player.anims.play(PLAYER_WALK_CYCLE, true);
-          this.footsteps.play();
         } else {
           this.player.setVelocityX(0);
           this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
-          this.footsteps.stop();
-          this.blows.play();
         }
         if (this.cursors.up.isDown) {
           if (this.physics.overlap(this.player, this.tree)) {
@@ -241,22 +250,17 @@ export class GameScene extends Phaser.Scene {
         } else {
           this.player.setVelocityX(0);
           this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
-          this.footsteps.play();
-          this.blows.play();
         }
       } else {
         if (this.cursors.left.isDown) {
           this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE_LEFT, true);
-          this.footsteps.play();
           this.player.setVelocityX(-180);
         } else if (this.cursors.right.isDown) {
           this.player.setVelocityX(180);
           this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
-          this.footsteps.play();
         } else {
           this.player.setVelocityX(0);
           this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
-          this.footsteps.play();
         }
 
         if (this.cursors.up.isDown) {
