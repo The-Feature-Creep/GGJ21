@@ -21,6 +21,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     this.animations(scene);
     this.physics(scene.physics);
+
+    //this.displayOriginX = 0.0;
   }
 
   private animations(scene: Phaser.Scene) {

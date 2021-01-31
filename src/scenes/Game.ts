@@ -60,20 +60,20 @@ export class GameScene extends Phaser.Scene {
 			frameHeight: 144,
 		});
 		this.load.spritesheet(PLAYER_IMG_KEY, CharacterImg, {
-			frameWidth: 100,
-			frameHeight: 119,
+			frameWidth: 103,
+			frameHeight: 119.5,
 		});
 		this.load.spritesheet(PLAYER_WALK_CYCLE_LEFT, CharacterImgLeft, {
-			frameWidth: 100,
-			frameHeight: 119,
+			frameWidth: 103,
+			frameHeight: 119.5,
 		});
 		this.load.spritesheet(PLAYER_WALK_SHOVEL_CYCLE_LEFT, CharacterImgLeft, {
-			frameWidth: 100,
-			frameHeight: 119,
+			frameWidth: 103,
+			frameHeight: 119.5,
 		});
 		this.load.spritesheet(PLAYER_WALK_SHOVEL_CYCLE, CharacterImg, {
-			frameWidth: 100,
-			frameHeight: 119,
+			frameWidth: 103,
+			frameHeight: 119.5,
 		});
 		this.load.spritesheet(ROCK_IMG_KEY, RockImg, {
 			frameWidth: 148,
@@ -190,11 +190,13 @@ export class GameScene extends Phaser.Scene {
 				}
 			} else {
 				if (this.cursors.left.isDown) {
-					this.player.anims.play(PLAYER_WALK_CYCLE_LEFT, true);
+					this.player.anims.play(PLAYER_WALK_CYCLE, true);
 					this.player.setVelocityX(-180);
+					this.player.setFlipX(true);
 				} else if (this.cursors.right.isDown) {
 					this.player.setVelocityX(180);
 					this.player.anims.play(PLAYER_WALK_CYCLE, true);
+					this.player.setFlipX(false);
 				} else {
 					this.player.setVelocityX(0);
 					this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
