@@ -68,6 +68,7 @@ export class GameScene extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
+<<<<<<< Updated upstream
     // const controlConfig = {
     //   camera: this.cameras.main,
     //   left: this.cursors.left,
@@ -78,6 +79,11 @@ export class GameScene extends Phaser.Scene {
     //   controlConfig
     // );
     // this.cameras.main.setBounds(0, 0, this.ground.x, 0);
+=======
+		this.physics.add.overlap(this.spotlight.sprite, this.player, (onCollide) => {
+			this.spotlightCollideWithPlayer();
+		});
+>>>>>>> Stashed changes
 
     // Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
 
@@ -130,6 +136,7 @@ export class GameScene extends Phaser.Scene {
   update(time, delta) {
     // this.controls.update(delta);
 
+<<<<<<< Updated upstream
     this.spotlight.update();
     this.guards.forEach((guard) => {
       guard.updatePosition();
@@ -197,6 +204,87 @@ export class GameScene extends Phaser.Scene {
         this.tree.anims.play(TREE_IMAGES_KEY, true);
         this.player.SetHiding = false;
         return;
+=======
+	spotlightCollideWithPlayer() {
+		if (this.timeInBeam >= 35) {
+			console.log("Gane Ends");
+		} else if (!this.player.isHidden) {
+			this.timeInBeam += 1;
+		}
+	}
+	update(time, delta) {
+		// this.controls.update(delta);
+		if (this.player.body.touching.none) {
+			this.timeInBeam = 0;
+		}
+		this.spotlight.update();
+		this.guards.forEach((guard) => {
+			guard.updatePosition();
+		});
+		if (this.cursors.left.isDown) {
+			this.player.setScale(-1, this.player.scaleY);
+			this.player.anims.play(PLAYER_WALK_CYCLE, true);
+			this.player.setVelocityX(-180);
+		} else if (this.cursors.right.isDown) {
+			this.player.setVelocityX(180);
+			this.player.setScale(1, this.player.scaleY);
+			this.player.anims.play(PLAYER_WALK_CYCLE, true);
+		} else {
+			this.player.setVelocityX(0);
+			this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+		}
+		if (this.cursors.up.isDown) {
+			if (this.player.GetHiding) {
+				if (this.physics.overlap(this.player, this.rock)) {
+					this.unhide(ROCK_IMG_KEY);
+				}
+			} else {
+				if (this.physics.overlap(this.player, this.tree)) {
+					this.hide(TREE_IMG_KEY);
+				}
+			}
+		} else if (this.cursors.down.isDown) {
+			if (this.player.GetHiding) {
+				if (this.physics.overlap(this.player, this.tree)) {
+					this.unhide(TREE_IMG_KEY);
+				}
+			} else {
+				if (this.physics.overlap(this.player, this.rock)) {
+					this.hide(ROCK_IMG_KEY);
+				}
+			}
+		}
+	}
+	private hide(object: string) {
+		switch (object) {
+			case "rock":
+				this.player.disableBody(true);
+				this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
+				this.player.SetHiding = true;
+				return;
+			case "tree":
+				this.player.disableBody(true);
+				this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
+				this.player.SetHiding = true;
+				return;
+
+			default:
+				break;
+		}
+	}
+	private unhide(object: string) {
+		switch (object) {
+			case "rock":
+				this.player.enableBody(false, this.player.x, this.player.y, true, true);
+				this.rock.anims.play(ROCK_IMG_KEY, true);
+				this.player.SetHiding = false;
+				return;
+			case "tree":
+				this.player.enableBody(false, this.player.x, this.player.y, true, true);
+				this.tree.anims.play(TREE_IMG_KEY, true);
+				this.player.SetHiding = false;
+				return;
+>>>>>>> Stashed changes
 
       default:
         break;
