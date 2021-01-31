@@ -8,6 +8,7 @@ import {
   PLAYER_WALK_CYCLE,
   PLAYER_WALK_SHOVEL_CYCLE,
   PLAYER_STATIONARY_CYCLE,
+  PLAYER_STATIONARY_SHOVEL_CYCLE,
   Player,
 } from './../objects/player';
 import CharacterImg from './../assets/prisoner.png';
@@ -18,7 +19,8 @@ import TreeImg from './../assets/tree.png';
 import HideTreeImg from '../assets/tree-hidden.png';
 import GuardImg from './../assets/guard1.png';
 import SpotlightImg from '../assets/spotlight.png';
-import { Shovel } from './../objects/shovel';
+import { Shovel, SHOVEL_IMAGE_KEY } from './../objects/shovel';
+import ShovelImg from './../assets/sandpile-with-spade.png';
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
@@ -36,6 +38,7 @@ export class GameScene extends Phaser.Scene {
   }
   preload() {
     // this.load.image(GUARD_IMG_KEY, GuardImg);
+    this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
     this.load.image('char', CharacterImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
@@ -67,6 +70,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.shovel = new Shovel(this, 800, 395);
     this.spotlight = new Spotlight(this, 100, 100);
     this.guards.push(new Guard(this, 100, 300));
     this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
@@ -80,6 +84,10 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.ground);
     this.physics.add.collider(this.rock, this.ground);
     this.physics.add.collider(this.tree, this.ground);
+
+    this.physics.add.overlap(this.shovel.sprite, this.player, (onCollide) => {
+      this.shovelCollideWithPlayer();
+    });
 
     this.physics.add.overlap(
       this.spotlight.sprite,
@@ -104,102 +112,131 @@ export class GameScene extends Phaser.Scene {
 
     // Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
   }
+  //Shovel collision checking
+  //Shovel collision checking
 
-	spotlightCollideWithPlayer() {
-		if (this.timeInBeam >= 35) {
-			console.log("Gane Ends");
-		} else if (!this.player.isHidden) {
-			this.timeInBeam += 1;
-		}
-	}
-	update(time, delta) {
-		// this.controls.update(delta);
-		if (this.player.body.touching.none) {
-			this.timeInBeam = 0;
-		}
-		this.spotlight.update();
-		this.guards.forEach((guard) => {
-			guard.updatePosition();
-			if (
-				guard.canSeePlayer(
-					this.player.x,
-					this.player.y,
-					this.player.getIsHidden
-				)
-			) {
-				console.log("Guard Can see you!");
-			}
-		});
-		if (this.cursors.left.isDown) {
-			this.player.setScale(-1, this.player.scaleY);
-			this.player.anims.play(PLAYER_WALK_CYCLE, true);
-			this.player.setVelocityX(-180);
-		} else if (this.cursors.right.isDown) {
-			this.player.setVelocityX(180);
-			this.player.setScale(1, this.player.scaleY);
-			this.player.anims.play(PLAYER_WALK_CYCLE, true);
-		} else {
-			this.player.setVelocityX(0);
-			this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
-		}
-		if (this.cursors.up.isDown) {
-			if (this.player.getIsHidden) {
-				if (this.physics.overlap(this.player, this.rock)) {
-					this.unhide(ROCK_IMG_KEY);
-				}
-			} else {
-				if (this.physics.overlap(this.player, this.tree)) {
-					this.hide(TREE_IMG_KEY);
-				}
-			}
-		} else if (this.cursors.down.isDown) {
-			if (this.player.getIsHidden) {
-				if (this.physics.overlap(this.player, this.tree)) {
-					this.unhide(TREE_IMG_KEY);
-				}
-			} else {
-				if (this.physics.overlap(this.player, this.rock)) {
-					this.hide(ROCK_IMG_KEY);
-				}
-			}
-		}
-	}
-	private hide(object: string) {
-		switch (object) {
-			case "rock":
-				this.player.setVisible(false);
-				this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
-				this.player.setIsHidden = true;
-				return;
-			case "tree":
-				this.player.setVisible(false);
-				this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
-				this.player.setIsHidden = true;
-				return;
+  shovelCollideWithPlayer() {
+    //character picks up shovel
+    //shovel disappears
+    this.player.hasShovel = true;
+    this.shovel.sprite.disableBody(undefined, true);
+  }
 
-			default:
-				break;
-		}
-	}
-	private unhide(object: string) {
-		switch (object) {
-			case "rock":
-				this.player.setVisible(true);
-				this.rock.anims.play(ROCK_IMG_KEY, true);
-				this.player.setIsHidden = false;
-				return;
-			case "tree":
-				this.player.setVisible(true);
-				this.tree.anims.play(TREE_IMG_KEY, true);
-				this.player.setIsHidden = false;
-				return;
+  spotlightCollideWithPlayer() {
+    if (this.timeInBeam >= 35) {
+      console.log('In Beam');
+      //   this.spotlight.update(this.player.x, this.player.y);
+    } else if (!this.player.isHidden) {
+      this.timeInBeam += 1;
+    }
+  }
+  update(time, delta) {
+    // this.controls.update(delta);
+    if (this.player.body.touching.none) {
+      this.timeInBeam = 0;
+    } else {
+      this.spotlight.update();
+    }
 
-			default:
-				break;
-		}
-	}
+    this.guards.forEach((guard) => {
+      guard.updatePosition();
+      if (
+        guard.canSeePlayer(
+          this.player.x,
+          this.player.y,
+          this.player.getIsHidden
+        )
+      ) {
+        console.log('Guard Can see you!');
+      }
+    });
 
-	getGround() {
-		return this.ground;
-	}
+    if (!this.player.hasShovel) {
+      if (this.cursors.left.isDown) {
+        this.player.setScale(-1, this.player.scaleY);
+        this.player.anims.play(PLAYER_WALK_CYCLE, true);
+        this.player.setVelocityX(-180);
+      } else if (this.cursors.right.isDown) {
+        this.player.setVelocityX(180);
+        this.player.setScale(1, this.player.scaleY);
+        this.player.anims.play(PLAYER_WALK_CYCLE, true);
+      } else {
+        this.player.setVelocityX(0);
+        this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+      }
+    } else {
+      if (this.cursors.left.isDown) {
+        this.player.setScale(-1, this.player.scaleY);
+        this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
+        this.player.setVelocityX(-180);
+      } else if (this.cursors.right.isDown) {
+        this.player.setVelocityX(180);
+        this.player.setScale(1, this.player.scaleY);
+        this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
+      } else {
+        this.player.setVelocityX(0);
+        this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
+      }
+    }
+
+    if (this.cursors.up.isDown) {
+      if (this.player.getIsHidden) {
+        if (this.physics.overlap(this.player, this.rock)) {
+          this.unhide(ROCK_IMG_KEY);
+        }
+      } else {
+        if (this.physics.overlap(this.player, this.tree)) {
+          this.hide(TREE_IMG_KEY);
+        }
+      }
+    } else if (this.cursors.down.isDown) {
+      if (this.player.getIsHidden) {
+        if (this.physics.overlap(this.player, this.tree)) {
+          this.unhide(TREE_IMG_KEY);
+        }
+      } else {
+        if (this.physics.overlap(this.player, this.rock)) {
+          this.hide(ROCK_IMG_KEY);
+        }
+      }
+    }
+  }
+  private hide(object: string) {
+    switch (object) {
+      case 'rock':
+        this.player.setVisible(false);
+        this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
+        this.player.setIsHidden = true;
+        return;
+      case 'tree':
+        this.player.setVisible(false);
+        this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
+        this.player.setIsHidden = true;
+        return;
+
+      default:
+        break;
+    }
+  }
+  private unhide(object: string) {
+    switch (object) {
+      case 'rock':
+        this.player.setVisible(true);
+        this.rock.anims.play(ROCK_IMG_KEY, true);
+        this.player.setIsHidden = false;
+        return;
+      case 'tree':
+        this.player.setVisible(true);
+        this.tree.anims.play(TREE_IMG_KEY, true);
+        this.player.setIsHidden = false;
+        return;
+
+      default:
+        break;
+    }
+  }
+
+  getGround() {
+    return this.ground;
+  }
 }

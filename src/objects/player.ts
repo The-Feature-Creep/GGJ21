@@ -3,11 +3,12 @@ export const PLAYER_IMG_KEY = 'prisoner';
 export const PLAYER_WALK_CYCLE = 'prisoner-walk';
 export const PLAYER_STATIONARY_CYCLE = 'prisoner-stand';
 export const PLAYER_WALK_SHOVEL_CYCLE = 'prisoner-walk-shovel';
+export const PLAYER_STATIONARY_SHOVEL_CYCLE = 'prisoner-stand-shovel';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-	isHidden: boolean = false;
-	hasShovel: boolean = false;
-	isShovelActive: boolean = false;
+  isHidden: boolean = false;
+  hasShovel: boolean = false;
+  isShovelActive: boolean = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -50,7 +51,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       frameRate: 12,
       repeat: -1,
     });
+    scene.anims.create({
+      key: PLAYER_STATIONARY_SHOVEL_CYCLE,
+      frames: scene.anims.generateFrameNumbers(PLAYER_IMG_KEY, {
+        start: 8,
+        end: 8,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
   }
+
   private physics(physics: Phaser.Physics.Arcade.ArcadePhysics) {
     physics.add
       .existing(this)
@@ -65,27 +76,24 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   get GetHasShovel() {
     return this.hasShovel;
   }
-  get GetShovelActive() {
-    return this.shovelActive;
+
+  get getIsHidden() {
+    return this.isHidden;
+  }
+  get getHasShovel() {
+    return this.hasShovel;
+  }
+  get getIsShovelActive() {
+    return this.isShovelActive;
   }
 
-	get getIsHidden() {
-		return this.isHidden;
-	}
-	get getHasShovel() {
-		return this.hasShovel;
-	}
-	get getIsShovelActive() {
-		return this.isShovelActive;
-	}
-
-	set setIsHidden(isHiding: boolean) {
-		this.isHidden = isHiding;
-	}
-	set setHasShovel(hasShovel: boolean) {
-		this.hasShovel = hasShovel;
-	}
-	set setIsShovelActive(isShovelActive: boolean) {
-		this.isShovelActive = isShovelActive;
-	}
+  set setIsHidden(isHiding: boolean) {
+    this.isHidden = isHiding;
+  }
+  set setHasShovel(hasShovel: boolean) {
+    this.hasShovel = hasShovel;
+  }
+  set setIsShovelActive(isShovelActive: boolean) {
+    this.isShovelActive = isShovelActive;
+  }
 }

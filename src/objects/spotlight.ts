@@ -70,9 +70,6 @@ export class Spotlight {
   }
 
   update(x?: number, y?: number) {
-    // this.zone.x = this.sprite.x;
-    // this.zone.y = this.sprite.y;
-
     if (x !== undefined && y !== undefined) {
       this.sprite.x = x;
       this.sprite.y = y;
