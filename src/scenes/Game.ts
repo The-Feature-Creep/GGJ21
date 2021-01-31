@@ -13,6 +13,7 @@ import {
 	PLAYER_STATIONARY_SHOVEL_CYCLE,
 	Player,
 } from "./../objects/player";
+import { LOSE_SCENE_KEY } from "./Lose";
 import CharacterImg from "./../assets/prisoner.png";
 import CharacterImgLeft from "./../assets/prisoner-left.png";
 import RockImg from "./../assets/rock.png";
@@ -88,9 +89,10 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.guards.length = 0;
 		this.shovel = new Shovel(this, 800, 445);
 		this.spotlight = new Spotlight(this, 100, 100);
-		this.guards.push(new Guard(this, 100, 300));
+		this.guards.push(new Guard(this, 600, 300));
 		this.terrain = new Terrain(this, 500, 550);
 		this.rock = new Rock(this, 300, 470, ROCK_IMG_KEY);
 		this.tree = new Tree(this, 600, 375, TREE_IMG_KEY);
@@ -129,11 +131,19 @@ export class GameScene extends Phaser.Scene {
 
 	spotlightCollideWithPlayer() {
 		if (this.timeInBeam >= 35) {
-			console.log("Gane Ends");
+			this.callLoseScene();
 		} else if (!this.player.isHidden) {
 			this.timeInBeam += 1;
 		}
 	}
+
+	callLoseScene() {
+		this.scene.launch(LOSE_SCENE_KEY, {
+			sceneContext: this,
+		});
+		this.scene.pause();
+	}
+
 	update(time, delta) {
 		// this.controls.update(delta);
 		if (this.player.body.touching.none) {
@@ -151,7 +161,7 @@ export class GameScene extends Phaser.Scene {
 					this.player.getIsHidden
 				)
 			) {
-				console.log("Guard Can see you!");
+				this.callLoseScene();
 			}
 		});
 
