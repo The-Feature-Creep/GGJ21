@@ -52,11 +52,11 @@ export class GameScene extends Phaser.Scene {
 		this.load.image(GROUND_IMAGES_KEY, PlatformImg);
 		this.load.image("fence-end", FenceEndImg);
 		this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
-			frameWidth: 98,
+			frameWidth: 98.5,
 			frameHeight: 144,
 		});
 		this.load.spritesheet(GUARD_2_IMG_KEY, GuardImg2, {
-			frameWidth: 98,
+			frameWidth: 98.5,
 			frameHeight: 144,
 		});
 		this.load.spritesheet(PLAYER_IMG_KEY, CharacterImg, {
