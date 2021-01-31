@@ -13,6 +13,7 @@ import HideTreeImg from '../assets/tree-hidden.png';
 import GuardImg from './../assets/guard.png';
 import SpotlightImg from '../assets/spotlight.png';
 import { Shovel } from './../objects/shovel';
+import ShovelImg from '../assets/sandpile-with-spade.png';
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
@@ -30,6 +31,7 @@ export class GameScene extends Phaser.Scene {
     super('Game');
   }
   preload() {
+    this.load.image('shovel', ShovelImg);
     this.load.image(GUARD_IMG_KEY, GuardImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
     this.load.spritesheet(PLAYER_IMAGES_KEY, CharacterImg, {
@@ -56,6 +58,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.shovel = new Shovel(this, 800, 395);
     this.spotlight = new Spotlight(this, 100, 100);
     this.guards.push(new Guard(this, 100, 300));
     this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
@@ -130,6 +133,12 @@ export class GameScene extends Phaser.Scene {
       repeat: -1,
     });
     //#endregion
+    //Shovel collision checking
+    this.physics.add.overlap(this.shovel.sprite, this.player, (onCollide) => {
+      this.shovelCollideWithPlayer();
+    });
+
+    //spotlight collision checking
     this.physics.add.overlap(
       this.spotlight.sprite,
       this.player,
@@ -137,6 +146,12 @@ export class GameScene extends Phaser.Scene {
         this.spotlightCollideWithPlayer();
       }
     );
+  }
+  shovelCollideWithPlayer() {
+    //character picks up shovel
+    //shovel disappears
+    this.player.hasShovel = true;
+    this.shovel.sprite.disableBody(undefined, true);
   }
 
   spotlightCollideWithPlayer() {
@@ -146,6 +161,7 @@ export class GameScene extends Phaser.Scene {
       this.timeInBeam += 1;
     }
   }
+
   update(time, delta) {
     // this.controls.update(delta);
     if (this.player.body.touching.none) {
