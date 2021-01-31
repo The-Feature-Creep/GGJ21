@@ -1,7 +1,6 @@
 import { Fence } from "./../objects/fence";
 import { GUARD_IMG_KEY, GUARD_2_IMG_KEY, Guard } from "./../objects/guard";
 import { SPOTLIGHT_IMG_KEY, Spotlight } from "./../objects/spotlight";
-import { Ground, GROUND_IMAGES_KEY } from "./../objects/ground";
 import { TREE_IMG_KEY, TREE_HIDE_IMG_KEY, Tree } from "./../objects/tree";
 import { ROCK_IMG_KEY, ROCK_HIDE_IMG_KEY, Rock } from "./../objects/rock";
 import {
@@ -17,7 +16,6 @@ import {
 import { LOSE_SCENE_KEY } from "./Lose";
 import CharacterImg from "./../assets/prisoner.png";
 import CharacterImgLeft from "./../assets/prisoner-left.png";
-import PlatformImg from "./../assets/ground.png";
 import RockImg from "./../assets/rock.png";
 import HideRock from "./../assets/rock-hidden.png";
 import TreeImg from "./../assets/tree.png";
@@ -26,8 +24,10 @@ import GuardImg from "./../assets/guard1.png";
 import GuardImg2 from "./../assets/guard2.png";
 import SpotlightImg from "../assets/spotlight.png";
 import FenceEndImg from "./../assets/fence-end.png";
-import { Shovel, SHOVEL_IMAGE_KEY } from "./../objects/shovel";
+import { Shovel, SHOVEL_IMG_KEY, SAND_PILE_IMG_KEY } from "./../objects/shovel";
 import ShovelImg from "./../assets/sandpile-with-spade.png";
+import SandPileImg from "./../assets/sandpile.png";
+import { Terrain } from "../objects/terrain";
 import WallTileImg from "../assets/fence-repeat.png";
 import { WallTileSprite, WALL_TILE_IMG_KEY } from "../objects/wall-tile";
 
@@ -35,7 +35,7 @@ export class GameScene extends Phaser.Scene {
 	private player: Player;
 	private rock: Rock;
 	private tree: Tree;
-	private ground: Ground;
+	private terrain: Terrain;
 	private guards: Guard[] = [];
 	private fence: Fence;
 	private spotlight: Spotlight;
@@ -50,10 +50,10 @@ export class GameScene extends Phaser.Scene {
 	preload() {
 		this.load.image(WALL_TILE_IMG_KEY, WallTileImg);
 		// this.load.image(GUARD_IMG_KEY, GuardImg);
-		this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
+		this.load.image(SAND_PILE_IMG_KEY, SandPileImg);
+		this.load.image(SHOVEL_IMG_KEY, ShovelImg);
 		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
 		this.load.image("char", CharacterImg);
-		this.load.image(GROUND_IMAGES_KEY, PlatformImg);
 		this.load.image("fence-end", FenceEndImg);
 		this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
 			frameWidth: 98.5,
@@ -99,55 +99,45 @@ export class GameScene extends Phaser.Scene {
 
 	create() {
 		this.guards.length = 0;
-		this.shovel = new Shovel(this, 800, 395);
+		this.shovel = new Shovel(this, 800, 445);
 		this.spotlight = new Spotlight(this, 100, 100);
-		this.guards.push(new Guard(this, 125, 300));
-		this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
-		this.rock = new Rock(this, 300, 425, ROCK_IMG_KEY);
-		this.tree = new Tree(this, 600, 315, TREE_IMG_KEY);
-		this.player = new Player(this, 100, 300, PLAYER_IMG_KEY);
-		this.fence = new Fence(this, 900, 350);
-		this.add.image(510, 330, "fence-end").setDepth(-1);
-		// this.physics.add.collider(this.player, this.fence);
-		this.wallTileSprite = new WallTileSprite(this, -253, 385, 600, 150);
+		this.guards.push(new Guard(this, 600, 300));
+		this.terrain = new Terrain(this, 500, 550);
+		this.rock = new Rock(this, 300, 470, ROCK_IMG_KEY);
+		this.tree = new Tree(this, 600, 375, TREE_IMG_KEY);
+		this.player = new Player(this, 125, 400, PLAYER_IMG_KEY);
+		this.fence = new Fence(this, 900, 380);
+		this.add.image(510, 380, "fence-end").setDepth(-1);
+
+		this.cameras.cameras[0].startFollow(this.player);
+		this.cameras.cameras[0].setFollowOffset(this.player.x, 150);
+
+		this.wallTileSprite = new WallTileSprite(this, -253, 435, 600, 150);
 
 		this.guards.forEach((guard) => {
-			this.physics.add.collider(guard, this.ground); // makes guard collide with ground
+			this.physics.add.collider(guard, this.terrain); // makes guard collide with terrain
 		});
 		this.physics.add.collider(this.player, this.fence);
-		this.physics.add.collider(this.player, this.ground);
-		this.physics.add.collider(this.rock, this.ground);
-		this.physics.add.collider(this.tree, this.ground);
+		this.physics.add.collider(this.player, this.terrain);
 
-		this.physics.add.overlap(this.shovel.sprite, this.player, (onCollide) => {
+		this.physics.add.overlap(this.shovel, this.player, (onCollide) => {
 			this.shovelCollideWithPlayer();
 		});
 
-		this.physics.add.overlap(this.spotlight.sprite, this.player, (onCollide) => {
-			this.spotlightCollideWithPlayer();
-		});
+		this.physics.add.overlap(
+			this.spotlight.sprite,
+			this.player,
+			(onCollide) => {
+				this.spotlightCollideWithPlayer();
+			}
+		);
 
 		this.cursors = this.input.keyboard.createCursorKeys();
-
-		// const controlConfig = {
-		//   camera: this.cameras.main,
-		//   left: this.cursors.left,
-		//   right: this.cursors.right,
-		//   speed: 0.1,
-		// };
-		// this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(
-		//   controlConfig
-		// );
-		// this.cameras.main.setBounds(0, 0, this.ground.x, 0);
-
-		// Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
 	}
 
 	shovelCollideWithPlayer() {
-		//character picks up shovel
-		//shovel disappears
 		this.player.hasShovel = true;
-		this.shovel.sprite.disableBody(undefined, true);
+		this.shovel.setTexture(SAND_PILE_IMG_KEY);
 	}
 
 	spotlightCollideWithPlayer() {
@@ -175,7 +165,13 @@ export class GameScene extends Phaser.Scene {
 		this.spotlight.update();
 		this.guards.forEach((guard) => {
 			guard.updatePosition();
-			if (guard.canSeePlayer(this.player.x, this.player.y, this.player.getIsHidden)) {
+			if (
+				guard.canSeePlayer(
+					this.player.x,
+					this.player.y,
+					this.player.getIsHidden
+				)
+			) {
 				this.callLoseScene();
 			}
 		});

@@ -1,4 +1,3 @@
-// import { WinScene } from "./scenes/Win";
 import Phaser from "phaser";
 import { GameScene } from "./scenes/Game";
 import { MainMenuScene } from "./scenes/MainMenu";
@@ -14,7 +13,7 @@ export const config = {
 		default: "arcade",
 		arcade: {
 			gravity: { y: 300 },
-			debug: false,
+			debug: true,
 		},
 	},
 	backgroundColor: "#633CA6",

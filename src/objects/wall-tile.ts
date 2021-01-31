@@ -10,6 +10,6 @@ export class WallTileSprite extends Phaser.GameObjects.TileSprite {
 		texture: string = WALL_TILE_IMG_KEY
 	) {
 		super(scene, x, y, width, height, texture);
-		scene.add.tileSprite(x, y, width, height, texture);
+		scene.add.tileSprite(x, y, width, height, texture).setDepth(-1);
 	}
 }
