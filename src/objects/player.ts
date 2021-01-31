@@ -2,6 +2,8 @@ export const PLAYER_IMG_KEY = "prisoner";
 export const PLAYER_WALK_CYCLE = "prisoner-walk";
 export const PLAYER_WALK_CYCLE_LEFT = "prisoner-walk-left";
 export const PLAYER_STATIONARY_CYCLE = "prisoner-stand";
+export const PLAYER_WALK_SHOVEL_CYCLE = "prisoner-walk-shovel";
+export const PLAYER_STATIONARY_SHOVEL_CYCLE = "prisoner-stand-shovel";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   isHidden: boolean = false;
@@ -48,6 +50,24 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       frameRate: 12,
       repeat: -1,
     });
+    scene.anims.create({
+      key: PLAYER_WALK_SHOVEL_CYCLE,
+      frames: scene.anims.generateFrameNumbers(PLAYER_IMG_KEY, {
+        start: 8,
+        end: 15,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: PLAYER_STATIONARY_SHOVEL_CYCLE,
+      frames: scene.anims.generateFrameNumbers(PLAYER_IMG_KEY, {
+        start: 8,
+        end: 8,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
   }
 
   private physics(physics: Phaser.Physics.Arcade.ArcadePhysics) {
@@ -56,6 +76,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       .setSize(100, 110)
       .setBounce(0.2)
       .setCollideWorldBounds(true);
+  }
+
+  get GetHiding() {
+    return this.isHidden;
+  }
+  get GetHasShovel() {
+    return this.hasShovel;
   }
 
   get getIsHidden() {

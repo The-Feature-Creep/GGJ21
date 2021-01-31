@@ -7,7 +7,9 @@ import {
   PLAYER_IMG_KEY,
   PLAYER_WALK_CYCLE,
   PLAYER_WALK_CYCLE_LEFT,
+  PLAYER_WALK_SHOVEL_CYCLE,
   PLAYER_STATIONARY_CYCLE,
+  PLAYER_STATIONARY_SHOVEL_CYCLE,
   Player,
 } from "./../objects/player";
 import CharacterImg from "./../assets/prisoner.png";
@@ -19,7 +21,8 @@ import TreeImg from "./../assets/tree.png";
 import HideTreeImg from "../assets/tree-hidden.png";
 import GuardImg from "./../assets/guard1.png";
 import SpotlightImg from "../assets/spotlight.png";
-import { Shovel } from "./../objects/shovel";
+import { Shovel, SHOVEL_IMAGE_KEY } from "./../objects/shovel";
+import ShovelImg from "./../assets/sandpile-with-spade.png";
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
@@ -37,6 +40,7 @@ export class GameScene extends Phaser.Scene {
   }
   preload() {
     // this.load.image(GUARD_IMG_KEY, GuardImg);
+    this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
     this.load.image("char", CharacterImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
@@ -62,21 +66,22 @@ export class GameScene extends Phaser.Scene {
       frameHeight: 100,
     });
     this.load.spritesheet(TREE_IMG_KEY, TreeImg, {
-      frameWidth: 148,
+      frameWidth: 231,
       frameHeight: 435,
     });
     this.load.spritesheet(TREE_HIDE_IMG_KEY, HideTreeImg, {
-      frameWidth: 148,
+      frameWidth: 231,
       frameHeight: 425,
     });
   }
 
   create() {
+    this.shovel = new Shovel(this, 800, 395);
     this.spotlight = new Spotlight(this, 100, 100);
     this.guards.push(new Guard(this, 100, 300));
     this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
     this.rock = new Rock(this, 300, 425, ROCK_IMG_KEY);
-    this.tree = new Tree(this, 700, 315, TREE_IMG_KEY);
+    this.tree = new Tree(this, 600, 315, TREE_IMG_KEY);
     this.player = new Player(this, 100, 300, PLAYER_IMG_KEY);
 
     this.guards.forEach((guard) => {
@@ -85,6 +90,11 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.ground);
     this.physics.add.collider(this.rock, this.ground);
     this.physics.add.collider(this.tree, this.ground);
+
+    this.physics.add.overlap(this.shovel.sprite, this.player, (onCollide) => {
+      this.shovelCollideWithPlayer();
+    });
+
     this.physics.add.overlap(
       this.spotlight.sprite,
       this.player,
@@ -108,20 +118,32 @@ export class GameScene extends Phaser.Scene {
 
     // Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
   }
+  //Shovel collision checking
+  //Shovel collision checking
+
+  shovelCollideWithPlayer() {
+    //character picks up shovel
+    //shovel disappears
+    this.player.hasShovel = true;
+    this.shovel.sprite.disableBody(undefined, true);
+  }
 
   spotlightCollideWithPlayer() {
     if (this.timeInBeam >= 35) {
-      console.log("Gane Ends");
+      console.log("In Beam");
+      //   this.spotlight.update(this.player.x, this.player.y);
     } else if (!this.player.isHidden) {
       this.timeInBeam += 1;
     }
   }
   update(time, delta) {
-    // this.controls.update(delta)
+    // this.controls.update(delta);
     if (this.player.body.touching.none) {
       this.timeInBeam = 0;
+    } else {
+      this.spotlight.update();
     }
-    this.spotlight.update();
+
     this.guards.forEach((guard) => {
       guard.updatePosition();
       if (
