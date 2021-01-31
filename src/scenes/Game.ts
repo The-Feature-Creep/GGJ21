@@ -26,7 +26,7 @@ import GuardImg from './../assets/guard1.png';
 import SpotlightImg from '../assets/spotlight.png';
 import FenceEndImg from './../assets/fence-end.png';
 import ShovelImg from './../assets/sandpile-with-spade.png';
-import DiggingImg from '../assets/digging.png';
+import DiggingImg from './../assets/digging.png';
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
@@ -44,13 +44,16 @@ export class GameScene extends Phaser.Scene {
     super('Game');
   }
   preload() {
-    this.load.image(PLAYER_DIG_TO_FREEDOM_KEY, DiggingImg);
     // this.load.image(GUARD_IMG_KEY, GuardImg);
     this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
     this.load.image('char', CharacterImg);
     this.load.image(GROUND_IMAGES_KEY, PlatformImg);
     this.load.image('fence-end', FenceEndImg);
+    this.load.spritesheet(PLAYER_DIG_TO_FREEDOM_KEY, DiggingImg, {
+      frameWidth: 98,
+      frameHeight: 144,
+    });
     this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
       frameWidth: 98,
       frameHeight: 144,
@@ -100,6 +103,11 @@ export class GameScene extends Phaser.Scene {
       this.shovelCollideWithPlayer();
     });
 
+    this.physics.add.overlap(this.player, this.fence, (onCollide) => {
+      this.nextToFence();
+      console.log('pog');
+    });
+
     this.physics.add.overlap(
       this.spotlight.sprite,
       this.player,
@@ -124,6 +132,16 @@ export class GameScene extends Phaser.Scene {
     // Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
   }
 
+  nextToFence() {
+    if (this.player.hasShovel) {
+      if (this.cursors.down.isDown) {
+        //game win
+        console.log('Digging');
+        this.player.anims.play(PLAYER_DIG_TO_FREEDOM_ANIMATION, true);
+      }
+    }
+  }
+
   shovelCollideWithPlayer() {
     //character picks up shovel
     //shovel disappears
@@ -133,7 +151,7 @@ export class GameScene extends Phaser.Scene {
 
   spotlightCollideWithPlayer() {
     if (this.timeInBeam >= 35) {
-      console.log('Gane Ends');
+      console.log('Game Ends');
     } else if (!this.player.isHidden) {
       this.timeInBeam += 1;
     }
@@ -169,7 +187,9 @@ export class GameScene extends Phaser.Scene {
         this.player.anims.play(PLAYER_WALK_CYCLE, true);
       } else {
         this.player.setVelocityX(0);
-        this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+        if (!this.cursors.down.isDown) {
+          this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+        }
       }
     } else {
       if (this.cursors.left.isDown) {
@@ -182,7 +202,9 @@ export class GameScene extends Phaser.Scene {
         this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
       } else {
         this.player.setVelocityX(0);
-        this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
+        if (!this.cursors.down.isDown) {
+          this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
+        }
       }
     }
     if (this.cursors.up.isDown) {
