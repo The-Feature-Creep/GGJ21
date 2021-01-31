@@ -8,7 +8,7 @@ import PlatformImg from "../assets/platform.png";
 import BushImg from "../assets/character.png";
 import RockImg from "../assets/character.png";
 import TreeImg from "../assets/character.png";
-import GuardImg from "./../assets/guard.png";
+import GuardImg from "./../assets/guard1.png";
 
 export class GameScene extends Phaser.Scene {
 	private player: Player;
@@ -27,7 +27,10 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	preload() {
-		this.load.image(GUARD_IMG_KEY, GuardImg);
+		this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
+			frameWidth: 98,
+			frameHeight: 144,
+		});
 		this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
 		this.load.image("char", CharacterImg);
 		this.load.image("platform", PlatformImg);

@@ -1,4 +1,6 @@
 export const GUARD_IMG_KEY = "guard";
+export const GUARD_WALK_CYCLE = "guard-walk-cycle";
+export const GUARD_STATIONARY_CYCLE = "guard-stationary-cycle";
 
 export class Guard extends Phaser.GameObjects.Sprite {
 	private isKnockedOut: boolean;
@@ -9,11 +11,32 @@ export class Guard extends Phaser.GameObjects.Sprite {
 
 	private velocity: number;
 
+	private walkCycle: Phaser.Animations.Animation | false;
+	private stationaryCycle: Phaser.Animations.Animation | false;
+
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		super(scene, x, y, GUARD_IMG_KEY);
 		this.isStationary = false;
 		this.velocity = 0.8;
 		scene.add.existing(this);
+		this.walkCycle = scene.anims.create({
+			key: GUARD_WALK_CYCLE,
+			frames: scene.anims.generateFrameNumbers(GUARD_IMG_KEY, {
+				start: 1,
+				end: 20,
+			}),
+			frameRate: 24,
+			repeat: -1,
+		});
+		this.stationaryCycle = scene.anims.create({
+			key: GUARD_STATIONARY_CYCLE,
+			frames: scene.anims.generateFrameNumbers(GUARD_IMG_KEY, {
+				start: 0,
+				end: 0,
+			}),
+			frameRate: 24,
+			repeat: -1,
+		});
 		this.setDestination();
 	}
 
@@ -30,6 +53,11 @@ export class Guard extends Phaser.GameObjects.Sprite {
 					this.setStationary();
 				}
 			}
+			this.anims.play(GUARD_WALK_CYCLE, true);
+		} else {
+			// const SpriteSheetFrames = this.scene.anims.get(GUARD_STATIONARY_CYCLE);
+			this.anims.play(GUARD_STATIONARY_CYCLE, true);
+			// console.log(SpriteSheetFrames);
 		}
 	}
 
@@ -38,7 +66,7 @@ export class Guard extends Phaser.GameObjects.Sprite {
 		let destination: number = 0;
 		while (!validDestination) {
 			const delta = Math.random() * 1000;
-			console.log({ delta: delta, myPos: this.x });
+			// console.log({ delta: delta, myPos: this.x });
 
 			if (Math.random() > 0.5) {
 				destination = this.x + delta;
@@ -50,8 +78,7 @@ export class Guard extends Phaser.GameObjects.Sprite {
 				// This is a valid destination
 				this.iPosition = this.x;
 				this.fPosition = destination;
-				console.log("Destination: ", this.fPosition);
-
+				// console.log("Destination: ", this.fPosition);
 				validDestination = true;
 			}
 		}
@@ -65,7 +92,7 @@ export class Guard extends Phaser.GameObjects.Sprite {
 
 	private setStationary() {
 		const stationaryTimeout = (Math.random() * 10000) / 2;
-		console.log(stationaryTimeout);
+		// console.log({ StationaryTimeout: stationaryTimeout });
 
 		this.isStationary = true;
 		setTimeout(() => {
