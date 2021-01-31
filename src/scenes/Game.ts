@@ -1,9 +1,9 @@
-import { Fence } from "./../objects/fence";
-import { GUARD_IMG_KEY, Guard } from "./../objects/guard";
-import { SPOTLIGHT_IMG_KEY, Spotlight } from "./../objects/spotlight";
-import { Ground, GROUND_IMAGES_KEY } from "./../objects/ground";
-import { TREE_IMG_KEY, TREE_HIDE_IMG_KEY, Tree } from "./../objects/tree";
-import { ROCK_IMG_KEY, ROCK_HIDE_IMG_KEY, Rock } from "./../objects/rock";
+import { Fence } from './../objects/fence';
+import { GUARD_IMG_KEY, Guard } from './../objects/guard';
+import { SPOTLIGHT_IMG_KEY, Spotlight } from './../objects/spotlight';
+import { Ground, GROUND_IMAGES_KEY } from './../objects/ground';
+import { TREE_IMG_KEY, TREE_HIDE_IMG_KEY, Tree } from './../objects/tree';
+import { ROCK_IMG_KEY, ROCK_HIDE_IMG_KEY, Rock } from './../objects/rock';
 import {
   PLAYER_IMG_KEY,
   PLAYER_WALK_CYCLE,
@@ -11,21 +11,26 @@ import {
   PLAYER_WALK_SHOVEL_CYCLE,
   PLAYER_WALK_SHOVEL_CYCLE_LEFT,
   PLAYER_STATIONARY_CYCLE,
+  PLAYER_STATIONARY_CYCLE_LEFT,
   PLAYER_STATIONARY_SHOVEL_CYCLE,
+  PLAYER_STATIONARY_SHOVEL_CYCLE_LEFT,
+  PLAYER_DIG_TO_FREEDOM_ANIMATION,
+  PLAYER_DIG_TO_FREEDOM_KEY,
   Player,
-} from "./../objects/player";
-import CharacterImg from "./../assets/prisoner.png";
-import CharacterImgLeft from "./../assets/prisoner-left.png";
-import PlatformImg from "./../assets/ground.png";
-import RockImg from "./../assets/rock.png";
-import HideRock from "./../assets/rock-hidden.png";
-import TreeImg from "./../assets/tree.png";
-import HideTreeImg from "../assets/tree-hidden.png";
-import GuardImg from "./../assets/guard1.png";
-import SpotlightImg from "../assets/spotlight.png";
-import FenceEndImg from "./../assets/fence-end.png";
-import { Shovel, SHOVEL_IMAGE_KEY } from "./../objects/shovel";
-import ShovelImg from "./../assets/sandpile-with-spade.png";
+} from './../objects/player';
+import CharacterImg from './../assets/prisoner.png';
+import CharacterImgLeft from './../assets/prisoner-left.png';
+import PlatformImg from './../assets/ground.png';
+import RockImg from './../assets/rock.png';
+import HideRock from './../assets/rock-hidden.png';
+import TreeImg from './../assets/tree.png';
+import HideTreeImg from '../assets/tree-hidden.png';
+import GuardImg from './../assets/guard1.png';
+import SpotlightImg from '../assets/spotlight.png';
+import FenceEndImg from './../assets/fence-end.png';
+import { Shovel, SHOVEL_IMAGE_KEY } from './../objects/shovel';
+import ShovelImg from './../assets/sandpile-with-spade.png';
+import DiggingImg from './../assets/digging.png';
 
 export class GameScene extends Phaser.Scene {
   private player: Player;
@@ -40,15 +45,14 @@ export class GameScene extends Phaser.Scene {
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   constructor() {
-    super("Game");
+    super('Game');
   }
   preload() {
-    // this.load.image(GUARD_IMG_KEY, GuardImg);
     this.load.image(SHOVEL_IMAGE_KEY, ShovelImg);
     this.load.image(SPOTLIGHT_IMG_KEY, SpotlightImg);
-    this.load.image("char", CharacterImg);
+    this.load.image('char', CharacterImg);
     this.load.image(GROUND_IMAGES_KEY, PlatformImg);
-    this.load.image("fence-end", FenceEndImg);
+    this.load.image('fence-end', FenceEndImg);
     this.load.spritesheet(GUARD_IMG_KEY, GuardImg, {
       frameWidth: 98,
       frameHeight: 144,
@@ -85,6 +89,10 @@ export class GameScene extends Phaser.Scene {
       frameWidth: 231,
       frameHeight: 425,
     });
+    this.load.spritesheet(PLAYER_DIG_TO_FREEDOM_KEY, DiggingImg, {
+      frameWidth: 135,
+      frameHeight: 141,
+    });
   }
 
   create() {
@@ -96,7 +104,7 @@ export class GameScene extends Phaser.Scene {
     this.tree = new Tree(this, 600, 315, TREE_IMG_KEY);
     this.player = new Player(this, 125, 300, PLAYER_IMG_KEY);
     this.fence = new Fence(this, 900, 350);
-    this.add.image(510, 330, "fence-end").setDepth(-1);
+    this.add.image(510, 330, 'fence-end').setDepth(-1);
 
     this.guards.forEach((guard) => {
       this.physics.add.collider(guard, this.ground); // makes guard collide with ground
@@ -133,6 +141,14 @@ export class GameScene extends Phaser.Scene {
 
     // Implement with tilemaps or try making character static ELSE. make scene move fixed distance every frame.
   }
+  nextToFence() {
+    if (this.cursors.down.isDown) {
+      if (this.player.getHasShovel) {
+        this.player.anims.play(PLAYER_DIG_TO_FREEDOM_ANIMATION, true);
+        console.log('confirmation');
+      }
+    }
+  }
 
   shovelCollideWithPlayer() {
     //character picks up shovel
@@ -143,7 +159,7 @@ export class GameScene extends Phaser.Scene {
 
   spotlightCollideWithPlayer() {
     if (this.timeInBeam >= 35) {
-      console.log("Gane Ends");
+      console.log('Gane Ends');
     } else if (!this.player.isHidden) {
       this.timeInBeam += 1;
     }
@@ -165,7 +181,7 @@ export class GameScene extends Phaser.Scene {
           this.player.getIsHidden
         )
       ) {
-        console.log("Guard Can see you!");
+        console.log('Guard Can see you!');
       }
     });
 
@@ -187,12 +203,21 @@ export class GameScene extends Phaser.Scene {
         if (this.cursors.left.isDown) {
           this.player.anims.play(PLAYER_WALK_CYCLE_LEFT, true);
           this.player.setVelocityX(-180);
+          this.player.lastDirection = 'left';
         } else if (this.cursors.right.isDown) {
           this.player.setVelocityX(180);
           this.player.anims.play(PLAYER_WALK_CYCLE, true);
+          this.player.lastDirection = 'right';
         } else {
           this.player.setVelocityX(0);
-          this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+          if (
+            this.player.lastDirection == 'right' &&
+            !this.physics.overlap(this.player, this.fence)
+          ) {
+            this.player.anims.play(PLAYER_STATIONARY_CYCLE, true);
+          } else if (!this.physics.overlap(this.player, this.fence)) {
+            this.player.anims.play(PLAYER_STATIONARY_CYCLE_LEFT, true);
+          }
         }
         if (this.cursors.up.isDown) {
           if (this.physics.overlap(this.player, this.tree)) {
@@ -224,37 +249,45 @@ export class GameScene extends Phaser.Scene {
         if (this.cursors.left.isDown) {
           this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE_LEFT, true);
           this.player.setVelocityX(-180);
+          this.player.lastDirection = 'left';
         } else if (this.cursors.right.isDown) {
           this.player.setVelocityX(180);
+          this.player.lastDirection = 'right';
           this.player.anims.play(PLAYER_WALK_SHOVEL_CYCLE, true);
         } else {
           this.player.setVelocityX(0);
-          this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
-        }
-
-        if (this.cursors.up.isDown) {
-          if (this.physics.overlap(this.player, this.tree)) {
-            this.player.setVelocityX(0);
-            this.hide(TREE_IMG_KEY);
+          if (
+            this.player.lastDirection == 'right' &&
+            !this.physics.overlap(this.player, this.fence)
+          ) {
+            this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE, true);
+          } else if (!this.physics.overlap(this.player, this.fence)) {
+            this.player.anims.play(PLAYER_STATIONARY_SHOVEL_CYCLE_LEFT, true);
           }
-        } else if (this.cursors.down.isDown) {
-          if (this.physics.overlap(this.player, this.rock)) {
-            this.player.setVelocityX(0);
-            this.hide(ROCK_IMG_KEY);
+
+          if (this.cursors.up.isDown) {
+            if (this.physics.overlap(this.player, this.tree)) {
+              this.player.setVelocityX(0);
+              this.hide(TREE_IMG_KEY);
+            }
+          } else if (this.cursors.down.isDown) {
+            if (this.physics.overlap(this.player, this.rock)) {
+              this.player.setVelocityX(0);
+              this.hide(ROCK_IMG_KEY);
+            }
           }
         }
       }
     }
   }
-
   private hide(object: string) {
     switch (object) {
-      case "rock":
+      case 'rock':
         this.player.setVisible(false);
         this.rock.anims.play(ROCK_HIDE_IMG_KEY, true);
         this.player.setIsHidden = true;
         return;
-      case "tree":
+      case 'tree':
         this.player.setVisible(false);
         this.tree.anims.play(TREE_HIDE_IMG_KEY, true);
         this.player.setIsHidden = true;
@@ -266,12 +299,12 @@ export class GameScene extends Phaser.Scene {
   }
   private unhide(object: string) {
     switch (object) {
-      case "rock":
+      case 'rock':
         this.player.setVisible(true);
         this.rock.anims.play(ROCK_IMG_KEY, true);
         this.player.setIsHidden = false;
         return;
-      case "tree":
+      case 'tree':
         this.player.setVisible(true);
         this.tree.anims.play(TREE_IMG_KEY, true);
         this.player.setIsHidden = false;

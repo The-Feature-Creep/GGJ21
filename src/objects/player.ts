@@ -4,16 +4,18 @@ export const PLAYER_IMG_KEY = 'prisoner';
 export const PLAYER_WALK_CYCLE = 'prisoner-walk';
 export const PLAYER_WALK_CYCLE_LEFT = 'prisoner-walk-left';
 export const PLAYER_STATIONARY_CYCLE = 'prisoner-stand';
+export const PLAYER_STATIONARY_CYCLE_LEFT = 'prisoner-stand-left';
 export const PLAYER_WALK_SHOVEL_CYCLE = 'prisoner-walk-shovel';
 export const PLAYER_WALK_SHOVEL_CYCLE_LEFT = 'prisoner-walk-shovel-left';
 export const PLAYER_STATIONARY_SHOVEL_CYCLE = 'prisoner-stand-shovel';
+export const PLAYER_STATIONARY_SHOVEL_CYCLE_LEFT = 'prisoner-stand-shovel-left';
 export const PLAYER_DIG_TO_FREEDOM_ANIMATION = 'dig-to-freedom-animaton';
 export const PLAYER_DIG_TO_FREEDOM_KEY = 'prisoner-digging';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   isHidden: boolean = false;
   hasShovel: boolean = false;
-  isShovelActive: boolean = false;
+  lastDirection: string = 'right';
 
   constructor(
     scene: Phaser.Scene,
@@ -56,6 +58,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       repeat: -1,
     });
     scene.anims.create({
+      key: PLAYER_STATIONARY_CYCLE_LEFT,
+      frames: scene.anims.generateFrameNumbers(PLAYER_WALK_CYCLE_LEFT, {
+        start: 3,
+        end: 3,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    scene.anims.create({
       key: PLAYER_WALK_SHOVEL_CYCLE,
       frames: scene.anims.generateFrameNumbers(PLAYER_IMG_KEY, {
         start: 8,
@@ -83,6 +94,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       repeat: -1,
     });
     scene.anims.create({
+      key: PLAYER_STATIONARY_SHOVEL_CYCLE_LEFT,
+      frames: scene.anims.generateFrameNumbers(PLAYER_WALK_SHOVEL_CYCLE_LEFT, {
+        start: 11,
+        end: 11,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    scene.anims.create({
       key: PLAYER_DIG_TO_FREEDOM_ANIMATION,
       frames: scene.anims.generateFrameNumbers(PLAYER_DIG_TO_FREEDOM_KEY, {
         start: 0,
@@ -104,18 +124,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   get GetHiding() {
     return this.isHidden;
   }
-  get GetHasShovel() {
+  get getHasShovel() {
     return this.hasShovel;
   }
 
   get getIsHidden() {
     return this.isHidden;
-  }
-  get getHasShovel() {
-    return this.hasShovel;
-  }
-  get getIsShovelActive() {
-    return this.isShovelActive;
   }
 
   set setIsHidden(isHiding: boolean) {
@@ -123,8 +137,5 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
   set setHasShovel(hasShovel: boolean) {
     this.hasShovel = hasShovel;
-  }
-  set setIsShovelActive(isShovelActive: boolean) {
-    this.isShovelActive = isShovelActive;
   }
 }
