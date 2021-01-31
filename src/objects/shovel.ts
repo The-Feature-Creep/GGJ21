@@ -1,16 +1,9 @@
-export const SHOVEL_IMAGE_KEY = 'shovel';
-export class Shovel {
-  sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-  private scene: Phaser.Scene;
-  private startingX: number;
-  private startingY: number;
-
-  constructor(scene: Phaser.Scene, startingX: number, startingY: number) {
-    this.scene = scene;
-    this.sprite = this.scene.physics.add
-      .sprite(startingX, startingY, SHOVEL_IMAGE_KEY)
-      .setCollideWorldBounds(true)
-      .setDepth(2000);
-    this.sprite.body.setAllowGravity(false);
-  }
+import { Obstacles } from "./obstacles";
+export const SHOVEL_IMG_KEY = "shovel";
+export const SAND_PILE_IMG_KEY = "sand-pile";
+export class Shovel extends Obstacles {
+	constructor(scene: Phaser.Scene, startingX: number, startingY: number) {
+		super(scene, startingX, startingY, SHOVEL_IMG_KEY);
+		scene.add.existing(this);
+	}
 }
