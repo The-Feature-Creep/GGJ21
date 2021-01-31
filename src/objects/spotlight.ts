@@ -1,5 +1,5 @@
-import { config } from '../';
-export const SPOTLIGHT_IMG_KEY = 'spotlight';
+import { config } from "../";
+export const SPOTLIGHT_IMG_KEY = "spotlight";
 const MAX_VELOCITY = 5;
 const ACCELERATION_MODIFER = 0.1;
 const MAX_WIDTH_MODIFIER = 0;
@@ -7,8 +7,8 @@ const MAX_HEIGHT_MODIFIER = 0;
 const SKY_HEIGHT_MODIFIER = 100;
 
 interface boundaryHit {
-  dimension: 'x' | 'y';
-  boundary: 'max' | 'min';
+  dimension: "x" | "y";
+  boundary: "max" | "min";
 }
 
 export class Spotlight {
@@ -35,7 +35,7 @@ export class Spotlight {
   private addSpotlight() {
     this.image = this.scene.add
       .image(this.startingX, this.startingY, SPOTLIGHT_IMG_KEY)
-      .setDepth(2);
+      .setDepth(2000); // should be above everything
     this.image.scale = 0.3;
     this.startMovement();
   }
@@ -84,14 +84,14 @@ export class Spotlight {
   private movePoint(boundaryHit?: boundaryHit) {
     const [x, y] = this.point
       ? [
-          !boundaryHit || boundaryHit.dimension !== 'x'
+          !boundaryHit || boundaryHit.dimension !== "x"
             ? this.point.x
-            : boundaryHit.boundary === 'max'
+            : boundaryHit.boundary === "max"
             ? config.width
             : 0,
-          !boundaryHit || boundaryHit.dimension !== 'y'
+          !boundaryHit || boundaryHit.dimension !== "y"
             ? this.point.y
-            : boundaryHit.boundary === 'max'
+            : boundaryHit.boundary === "max"
             ? config.height
             : 0,
         ]
@@ -135,15 +135,15 @@ export class Spotlight {
       this.velocity.x = 0;
       this.image.x = config.width - MAX_WIDTH_MODIFIER;
       boundaryHit = {
-        dimension: 'x',
-        boundary: 'max',
+        dimension: "x",
+        boundary: "max",
       };
     } else if (this.image.x <= MAX_WIDTH_MODIFIER && this.velocity.x) {
       this.velocity.x = 0;
       this.image.x = MAX_WIDTH_MODIFIER;
       boundaryHit = {
-        dimension: 'x',
-        boundary: 'min',
+        dimension: "x",
+        boundary: "min",
       };
     }
 
@@ -154,8 +154,8 @@ export class Spotlight {
       this.velocity.y = 0;
       this.image.y = config.height - MAX_HEIGHT_MODIFIER;
       boundaryHit = {
-        dimension: 'y',
-        boundary: 'max',
+        dimension: "y",
+        boundary: "max",
       };
     } else if (
       this.image.y <= MAX_HEIGHT_MODIFIER + SKY_HEIGHT_MODIFIER &&
@@ -164,8 +164,8 @@ export class Spotlight {
       this.velocity.y = 0;
       this.image.y = MAX_HEIGHT_MODIFIER + SKY_HEIGHT_MODIFIER;
       boundaryHit = {
-        dimension: 'y',
-        boundary: 'min',
+        dimension: "y",
+        boundary: "min",
       };
     }
     if (dist < 100 || boundaryHit) {

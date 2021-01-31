@@ -56,12 +56,16 @@ export class GameScene extends Phaser.Scene {
 
   create() {
     this.spotlight = new Spotlight(this, 100, 100);
-    this.guards.push(new Guard(this, 100, 425));
+    this.guards.push(new Guard(this, 100, 300));
     this.ground = new Ground(this, 500, 480, GROUND_IMAGES_KEY);
     this.rock = new Rock(this, 300, 425, ROCK_IMAGES_KEY);
     this.tree = new Tree(this, 600, 315, TREE_IMAGES_KEY);
     this.player = new Player(this, 100, 300, PLAYER_IMAGES_KEY);
 
+    // should explore how to do this in the constructor
+    this.guards.forEach((guard) => {
+      this.physics.add.collider(guard, this.ground); // makes guard collide with ground
+    });
     this.physics.add.collider(this.player, this.ground);
     this.physics.add.collider(this.rock, this.ground);
     this.physics.add.collider(this.tree, this.ground);
